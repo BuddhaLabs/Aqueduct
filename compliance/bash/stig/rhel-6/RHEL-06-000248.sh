@@ -1,12 +1,12 @@
 #!/bin/bash
-
+#
 ##########################################################################
 #Red Hat Enterprise Linux 6 - DISA STIG Compliance Remediation Content
 #Copyright (C) 2013 
 #Vincent C. Passaro (vince@buddhalabs.com)
 #
 ##########################################################################
-
+#
 ######################  Buddha Labs LLC  ################################
 # By Vincent C. Passaro                                                 #
 # Buddha Labs LLC.                                                      #
@@ -19,10 +19,12 @@
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
 #	                                                                  
    
-	
+#	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000248
 # Group Title: SRG-OS-000056
+#
+   
 # Rule ID: RHEL-06-000248_rule
 # Severity: medium
 # Rule Version (STIG-ID): RHEL-06-000248
@@ -63,9 +65,12 @@
 # This instructs the NTP software to contact that remote server to obtain 
 # time data.  
 #######################DISA INFORMATION##################################
-	
+#	
 # Global Variables
 PDI=RHEL-06-000248
-	
-# Start-Lockdown
+#
+#BEGIN_CHECK
+#END_CHECK
+#BEGIN_REMEDY
+#END_REMEDY
 

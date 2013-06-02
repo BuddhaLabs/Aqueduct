@@ -1,12 +1,12 @@
 #!/bin/bash
-
+#
 ##########################################################################
 #Red Hat Enterprise Linux 6 - DISA STIG Compliance Remediation Content
 #Copyright (C) 2013 
 #Vincent C. Passaro (vince@buddhalabs.com)
 #
 ##########################################################################
-
+#
 ######################  Buddha Labs LLC  ################################
 # By Vincent C. Passaro                                                 #
 # Buddha Labs LLC.                                                      #
@@ -19,10 +19,12 @@
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
 #	                                                                  
    
-	
+#	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000230
 # Group Title: SRG-OS-000163
+#
+   
 # Rule ID: RHEL-06-000230_rule
 # Severity: low
 # Rule Version (STIG-ID): RHEL-06-000230
@@ -65,9 +67,12 @@
 # will preempt any SSH setting made here. Keep in mind that some processes 
 # may stop SSH from correctly detecting that the user is idle.  
 #######################DISA INFORMATION##################################
-	
+#	
 # Global Variables
 PDI=RHEL-06-000230
-	
-# Start-Lockdown
+#
+#BEGIN_CHECK
+#END_CHECK
+#BEGIN_REMEDY
+#END_REMEDY
 

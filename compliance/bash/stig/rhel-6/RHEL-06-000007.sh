@@ -1,12 +1,12 @@
 #!/bin/bash
-
+#
 ##########################################################################
 #Red Hat Enterprise Linux 6 - DISA STIG Compliance Remediation Content
 #Copyright (C) 2013 
 #Vincent C. Passaro (vince@buddhalabs.com)
 #
 ##########################################################################
-
+#
 ######################  Buddha Labs LLC  ################################
 # By Vincent C. Passaro                                                 #
 # Buddha Labs LLC.                                                      #
@@ -19,10 +19,12 @@
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
 #	                                                                  
    
-	
+#	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000007
 # Group Title: SRG-OS-999999
+#
+   
 # Rule ID: RHEL-06-000007_rule
 # Severity: low
 # Rule Version (STIG-ID): RHEL-06-000007
@@ -56,9 +58,12 @@
 # server, then creating a separate partition is not necessary at 
 # installation time, and the mountpoint can instead be configured later.  
 #######################DISA INFORMATION##################################
-	
+#	
 # Global Variables
 PDI=RHEL-06-000007
-	
-# Start-Lockdown
+#
+#BEGIN_CHECK
+#END_CHECK
+#BEGIN_REMEDY
+#END_REMEDY
 

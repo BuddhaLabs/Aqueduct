@@ -1,12 +1,12 @@
 #!/bin/bash
-
+#
 ##########################################################################
 #Red Hat Enterprise Linux 6 - DISA STIG Compliance Remediation Content
 #Copyright (C) 2013 
 #Vincent C. Passaro (vince@buddhalabs.com)
 #
 ##########################################################################
-
+#
 ######################  Buddha Labs LLC  ################################
 # By Vincent C. Passaro                                                 #
 # Buddha Labs LLC.                                                      #
@@ -19,10 +19,12 @@
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
 #	                                                                  
    
-	
+#	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000050
 # Group Title: SRG-OS-000078
+#
+   
 # Rule ID: RHEL-06-000050_rule
 # Severity: medium
 # Rule Version (STIG-ID): RHEL-06-000050
@@ -64,9 +66,12 @@
 # also another PAM module (such as "pam_cracklib") during a password change 
 # operation, then the most restrictive must be satisfied.  
 #######################DISA INFORMATION##################################
-	
+#	
 # Global Variables
 PDI=RHEL-06-000050
-	
-# Start-Lockdown
+#
+#BEGIN_CHECK
+#END_CHECK
+#BEGIN_REMEDY
+#END_REMEDY
 

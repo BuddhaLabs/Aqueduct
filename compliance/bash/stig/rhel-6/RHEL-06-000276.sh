@@ -1,12 +1,12 @@
 #!/bin/bash
-
+#
 ##########################################################################
 #Red Hat Enterprise Linux 6 - DISA STIG Compliance Remediation Content
 #Copyright (C) 2013 
 #Vincent C. Passaro (vince@buddhalabs.com)
 #
 ##########################################################################
-
+#
 ######################  Buddha Labs LLC  ################################
 # By Vincent C. Passaro                                                 #
 # Buddha Labs LLC.                                                      #
@@ -19,10 +19,12 @@
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
 #	                                                                  
    
-	
+#	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000276
 # Group Title: SRG-OS-000185
+#
+   
 # Rule ID: RHEL-06-000276_rule
 # Severity: low
 # Rule Version (STIG-ID): RHEL-06-000276
@@ -73,9 +75,12 @@
 # https://docs.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Securit
 # y_Guide/sect-Security_Guide-LUKS_Disk_Encryption.html  
 #######################DISA INFORMATION##################################
-	
+#	
 # Global Variables
 PDI=RHEL-06-000276
-	
-# Start-Lockdown
+#
+#BEGIN_CHECK
+#END_CHECK
+#BEGIN_REMEDY
+#END_REMEDY
 
