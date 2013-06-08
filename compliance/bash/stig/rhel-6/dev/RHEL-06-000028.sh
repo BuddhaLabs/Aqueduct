@@ -69,5 +69,7 @@ PDI=RHEL-06-000028
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+echo "console" > /etc/securetty
+
 #END_REMEDY
 
