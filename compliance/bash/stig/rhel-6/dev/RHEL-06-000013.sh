@@ -71,5 +71,17 @@ PDI=RHEL-06-000013
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+if [ -f /etc/yum.conf ]
+then
+    sed -i "s/gpgcheck=0/gpgcheck=1/g" /etc/yum.conf
+fi
+
+if [ -d /etc/yum.repos.d ]
+then
+    for i in `ls /etc/yum.repos.d/*.repo`    
+    do
+        sed -i "s/gpgcheck=0/gpgcheck=1/g" $i
+    done
+fi
 #END_REMEDY
 
