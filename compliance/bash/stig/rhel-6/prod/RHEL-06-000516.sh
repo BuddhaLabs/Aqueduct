@@ -65,9 +65,13 @@
 #	
 # Global Variables
 PDI=RHEL-06-000516
-#
-#BEGIN_CHECK
+BADRPMFILES=$(rpm -Va | grep '^.....U' | awk '{print $2}')
+BADNUMBER=$(echo $BADRPMFILES | wc -l)
 #END_CHECK
-#BEGIN_REMEDY
-#END_REMEDY
-
+if [ $BADNUMBER -ne 0 ]
+	then
+		for line in $BADRPMFILES
+			do 
+				rpm --setugids `rpm -qf $line`
+		done
+fi
