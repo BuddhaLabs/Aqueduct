@@ -75,6 +75,9 @@
 # Global Variables
 PDI=RHEL-06-000519
 #
+#This could get ugly, so were gonna assume that the system is bound to some sort of REPO
+#that can reinstall packages should they fall out of sync with the RPMDB.
+#
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY

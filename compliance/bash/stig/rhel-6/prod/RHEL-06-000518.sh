@@ -75,8 +75,25 @@
 # Global Variables
 PDI=RHEL-06-000518
 #
+#This looks like one that is going to be a pain since its also checking log files.  Which
+#is kind of a good thing since the fix will constantly keep some of the log files in spec
+#However, my suspicion is that the STIG requirements for changing permissions for log file
+#directories will conflict, and start throwing false positives.  
+#
+#Need to follow-up on this! (VCP June 8 2013)
+#
+#
 #BEGIN_CHECK
+BADRPMFILES=$(rpm -Va  | grep '^.M' | awk '{print $2}')
+BADNUMBER=$(echo $BADRPMFILES | wc -l)
 #END_CHECK
+if [ $BADNUMBER -ne 0 ]
+	then
+		for line in $BADRPMFILES
+			do 
+				rpm --setperms `rpm -qf $line`
+		done
+fi
 #BEGIN_REMEDY
 #END_REMEDY
 

@@ -82,7 +82,16 @@
 PDI=RHEL-06-000526
 #
 #BEGIN_CHECK
+AUTOSERVICE=$( service autofs status | grep "running..." | wc -l )
+
+if [ $AUTOSERVICE -ne 0 ]
+  then
 #END_CHECK
+
 #BEGIN_REMEDY
+  service autofs stop
+  chkconfig --level 2345 autofs off
+fi
 #END_REMEDY
+
 

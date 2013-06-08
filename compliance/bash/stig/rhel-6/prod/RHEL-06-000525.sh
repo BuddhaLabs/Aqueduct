@@ -21,50 +21,50 @@
    
 #	
 #######################DISA INFORMATION##################################
-# Group ID (Vulid): RHEL-06-000521
-# Group Title: SRG-OS-999999
+# Group ID (Vulid): RHEL-06-000525
+# Group Title: SRG-OS-000062
 #
    
-# Rule ID: RHEL-06-000521_rule
-# Severity: medium
-# Rule Version (STIG-ID): RHEL-06-000521
-# Rule Title: The mail system must forward all mail for root to one or 
-# more system administrators.
+# Rule ID: RHEL-06-000525_rule
+# Severity: low
+# Rule Version (STIG-ID): RHEL-06-000525
+# Rule Title: Auditing must be enabled at boot by setting a kernel 
+# parameter.
 #
-# Vulnerability Discussion: A number of system services utilize email 
-# messages sent to the root user to notify system administrators of active 
-# or impending issues.  These messages must be forwarded to at least one 
-# monitored email address.
+# Vulnerability Discussion: Each process on the system carries an 
+# "auditable" flag which indicates whether its activities can be audited. 
+# Although "auditd" takes care of enabling this for all processes which 
+# launch after it does, adding the kernel argument ensures it is set for 
+# every process during boot.
 #
 # Responsibility: 
 # IAControls: 
 #
 # Check Content:
 #
-# Find the list of alias maps used by the Postfix mail server:
-
-# postconf alias_maps
-
-# Query the Postfix alias maps for an alias for "root":
-
-# postmap -q root <alias_map>
-
-# If there are no aliases configured for root that forward to a monitored 
-# email address, this is a finding.
+# Inspect the kernel boot arguments (which follow the word "kernel") in 
+# "/etc/grub.conf". If they include "audit=1", then auditing is enabled at 
+# boot time. 
+# If auditing is not enabled at boot time, this is a finding.
 #
 # Fix Text: 
 #
-# Set up an alias for root that forwards to a monitored email address:
+# To ensure all processes can be audited, even those which start prior to 
+# the audit daemon, add the argument "audit=1" to the kernel line in 
+# "/etc/grub.conf", in the manner below: 
 
-# echo "root: <system.administrator>@mail.mil" >> /etc/aliases
-# newaliases  
+# kernel /vmlinuz-version ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb 
+# quiet audit=1
+
+  
 #######################DISA INFORMATION##################################
 #	
 # Global Variables
-PDI=RHEL-06-000521
+PDI=RHEL-06-000525
 #
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+sed -i '/^[^#].*kernel/ {/audit/! s/.*/& audit=1/}' /boot/grub/grub.conf
 #END_REMEDY
 

@@ -21,47 +21,52 @@
    
 #	
 #######################DISA INFORMATION##################################
-# Group ID (Vulid): RHEL-06-000522
-# Group Title: SRG-OS-000057
+# Group ID (Vulid): RHEL-06-000521
+# Group Title: SRG-OS-999999
 #
    
-# Rule ID: RHEL-06-000522_rule
+# Rule ID: RHEL-06-000521_rule
 # Severity: medium
-# Rule Version (STIG-ID): RHEL-06-000522
-# Rule Title: Audit log files must be group-owned by root.
+# Rule Version (STIG-ID): RHEL-06-000521
+# Rule Title: The mail system must forward all mail for root to one or 
+# more system administrators.
 #
-# Vulnerability Discussion: If non-privileged users can write to audit 
-# logs, audit trails can be modified or destroyed.
+# Vulnerability Discussion: A number of system services utilize email 
+# messages sent to the root user to notify system administrators of active 
+# or impending issues.  These messages must be forwarded to at least one 
+# monitored email address.
 #
 # Responsibility: 
 # IAControls: 
 #
 # Check Content:
 #
-# Run the following command to check the group owner of the system audit 
-# logs: 
+# Find the list of alias maps used by the Postfix mail server:
 
-# grep "^log_file" /etc/audit/auditd.conf|sed s/^[^\/]*//|xargs stat -c 
-# %G:%n
+# postconf alias_maps
 
-# Audit logs must be group-owned by root. 
-# If they are not, this is a finding.
+# Query the Postfix alias maps for an alias for "root":
+
+# postmap -q root <alias_map>
+
+# If there are no aliases configured for root that forward to a monitored 
+# email address, this is a finding.
 #
 # Fix Text: 
 #
-# Change the group owner of the audit log files with the following 
-# command: 
+# Set up an alias for root that forwards to a monitored email address:
 
-# chgrp root [audit_file]
-
-  
+# echo "root: <system.administrator>@mail.mil" >> /etc/aliases
+# newaliases  
 #######################DISA INFORMATION##################################
 #	
 # Global Variables
-PDI=RHEL-06-000522
+PDI=RHEL-06-000521
 #
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
 #END_REMEDY
 
+#This isn't something we can remediate.  We could facilitate the check, but not the
+#fix...So into the manual-check folder with ya!

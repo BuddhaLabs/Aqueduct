@@ -21,49 +21,52 @@
    
 #	
 #######################DISA INFORMATION##################################
-# Group ID (Vulid): RHEL-06-000525
-# Group Title: SRG-OS-000062
+# Group ID (Vulid): RHEL-06-000522
+# Group Title: SRG-OS-000057
 #
    
-# Rule ID: RHEL-06-000525_rule
-# Severity: low
-# Rule Version (STIG-ID): RHEL-06-000525
-# Rule Title: Auditing must be enabled at boot by setting a kernel 
-# parameter.
+# Rule ID: RHEL-06-000522_rule
+# Severity: medium
+# Rule Version (STIG-ID): RHEL-06-000522
+# Rule Title: Audit log files must be group-owned by root.
 #
-# Vulnerability Discussion: Each process on the system carries an 
-# "auditable" flag which indicates whether its activities can be audited. 
-# Although "auditd" takes care of enabling this for all processes which 
-# launch after it does, adding the kernel argument ensures it is set for 
-# every process during boot.
+# Vulnerability Discussion: If non-privileged users can write to audit 
+# logs, audit trails can be modified or destroyed.
 #
 # Responsibility: 
 # IAControls: 
 #
 # Check Content:
 #
-# Inspect the kernel boot arguments (which follow the word "kernel") in 
-# "/etc/grub.conf". If they include "audit=1", then auditing is enabled at 
-# boot time. 
-# If auditing is not enabled at boot time, this is a finding.
+# Run the following command to check the group owner of the system audit 
+# logs: 
+
+# grep "^log_file" /etc/audit/auditd.conf|sed s/^[^\/]*//|xargs stat -c 
+# %G:%n
+
+# Audit logs must be group-owned by root. 
+# If they are not, this is a finding.
 #
 # Fix Text: 
 #
-# To ensure all processes can be audited, even those which start prior to 
-# the audit daemon, add the argument "audit=1" to the kernel line in 
-# "/etc/grub.conf", in the manner below: 
+# Change the group owner of the audit log files with the following 
+# command: 
 
-# kernel /vmlinuz-version ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb 
-# quiet audit=1
+# chgrp root [audit_file]
 
   
 #######################DISA INFORMATION##################################
 #	
 # Global Variables
-PDI=RHEL-06-000525
+PDI=RHEL-06-000522
 #
 #BEGIN_CHECK
+AUDITFILEPERMS=$(grep "^log_file" /etc/audit/auditd.conf|sed s/^[^\/]*//|xargs stat -c %G:%n|cut -d ":" -f 1|grep -i root|wc -l)
+if [ $AUDITFILEPERMS != "1" ]
+  then
 #END_CHECK
 #BEGIN_REMEDY
+  chgrp root $AUDITFILEPERMS
+done
 #END_REMEDY
 
