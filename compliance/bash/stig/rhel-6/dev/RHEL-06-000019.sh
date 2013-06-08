@@ -66,5 +66,17 @@ PDI=RHEL-06-000019
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+unalias rm
+rm /etc/hosts.equiv
+
+for in in `cat /etc/passwd | awk -F":" '{ print $6 }' `
+do
+    if [ -f ${i}/.rhosts ]
+    then
+        rm ${i}/.rhosts
+    fi
+done
+
 #END_REMEDY
 
