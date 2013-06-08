@@ -84,5 +84,7 @@ PDI=RHEL-06-000005
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+sed -i 's/space_left_action = IGNORE/space_left_action = SYSLOG/g' /etc/audit/auditd.conf
+sed -i 's/space_left_action = SUSPEND/space_left_action = SYSLOG/g' /etc/audit/auditd.conf
 #END_REMEDY
 
