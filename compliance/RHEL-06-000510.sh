@@ -75,9 +75,28 @@
 #	
 # Global Variables
 PDI=RHEL-06-000510
+AUDITLOGFILE='/etc/audit/auditd.conf'
+#
+#So the breakdown is this:
+#Suspend with suspend the system (bad if this is an Amazon image or something)
+#Single will put the system into single usermode (bad again if AMI)
+#Halt will halt the system (bad again)
+#exec will execute a command (Thats ok..just don't know what everyone would want it to be)
+##If for some reason in the future syslog wasn't allowed, we could do exec + the logger 
+##command and get the same result *giggles*.  We could also push to WALL and notify everyone thats
+##actually on the System.
+#
+#So were going to assume that people followed the STIG guidance and configured a syslog
+#server (and actually watch the logs) HA!
+#
 #
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+#Default is IGNORE
+sed -i 's/disk_full_action = IGNORE/disk_full_action = SYSLOG/g' $AUDITLOGFILE
+sed -i 's/disk_error_action = IGNORE/disk_error_action = SYSLOG/g' $AUDITLOGFILE
+#Remove if set to SUSPEND since that's not allowed either. 
+sed -i 's/disk_full_action = SUSPEND/disk_full_action = SYSLOG/g' $AUDITLOGFILE
+sed -i 's/disk_error_action = SUSPEND/disk_error_action = SYSLOG/g' $AUDITLOGFILE
 #END_REMEDY
-
