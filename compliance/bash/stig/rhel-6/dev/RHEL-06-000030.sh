@@ -64,5 +64,10 @@ PDI=RHEL-06-000030
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+grep 'nullok' /etc/pam.d/* > /dev/null
+if [ $? == 0 ]
+then
+    sed -i 's/ nullok//g' /etc/pam.d/*
+fi
 #END_REMEDY
 
