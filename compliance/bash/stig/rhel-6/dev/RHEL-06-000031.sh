@@ -62,5 +62,18 @@ PDI=RHEL-06-000031
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+# This is a bit kludgy; the password has to be changed to get rid of 
+# anything besides "x" in the second field. However, we don't want 
+# an account with a password from a public script, either. So the 
+# second passwd command locks the account.
+
+for i in `awk -F":" '( $2 != "x") {print $1}' /etc/passwd`
+do 
+    USER=`echo $i `
+    echo "ChangeMe" | passwd --stdin $USER
+    passwd -l $USER 
+done
+
 #END_REMEDY
 
