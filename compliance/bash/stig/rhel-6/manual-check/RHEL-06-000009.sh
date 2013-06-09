@@ -88,3 +88,8 @@ PDI=RHEL-06-000009
 #BEGIN_REMEDY
 #END_REMEDY
 
+#BEGIN_COMMENT
+# This is not a finding if you are using RHN, Satellite, or manually 
+# updating your servers. 
+#END_COMMENT
+
