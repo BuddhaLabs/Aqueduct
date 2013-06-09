@@ -68,5 +68,10 @@ PDI=RHEL-06-000029
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+awk -F: '{
+			if ($3)
+			if ($3 < 500 && $1 != "root")
+			print "/usr/sbin/usermod -s /sbin/nologin " $1
+		}' /etc/passwd
 #END_REMEDY
 
