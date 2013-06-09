@@ -58,7 +58,12 @@
 PDI=RHEL-06-000509
 #
 #BEGIN_CHECK
+ACTIVESETTING=$(cat /etc/audisp/plugins.d/syslog.conf | grep 'active = no' | wc -l)
+if [ $ACTIVESETTING -ne 0 ]
+	then
 #END_CHECK
 #BEGIN_REMEDY
+		sed -i 's/active = no/active = yes/g'  /etc/audisp/plugins.d/syslog.conf
+fi
 #END_REMEDY
 
