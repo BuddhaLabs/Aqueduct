@@ -62,5 +62,8 @@ PDI=RHEL-06-000039
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+chown root /etc/passwd
+
 #END_REMEDY
 
