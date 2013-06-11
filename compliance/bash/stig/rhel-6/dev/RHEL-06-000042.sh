@@ -62,5 +62,8 @@ PDI=RHEL-06-000042
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+chown root /etc/group
+
 #END_REMEDY
 
