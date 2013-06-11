@@ -62,5 +62,8 @@ PDI=RHEL-06-000043
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+chgrp root /etc/group
+
 #END_REMEDY
 
