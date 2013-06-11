@@ -61,5 +61,8 @@ PDI=RHEL-06-000034
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+chgrp root /etc/shadow
+
 #END_REMEDY
 
