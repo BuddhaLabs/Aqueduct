@@ -62,5 +62,19 @@ PDI=RHEL-06-000032
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+ROOTACCOUNTLIST=`awk -F ':' '!/^root/{if($3 == 0)print $1}' /etc/passwd`
+if [ "$ROOTACCOUNTLIST" != "" ]
+then
+  echo "------------------------------" > $PDI-ROOTACCOUNTS.log
+  date >> $PDI-ROOTACCOUNTS.log
+  echo " " >> $PDI-ROOTACCOUNTS.log
+  echo "The following accounts are sharing the UID 0" >> $PDI-ROOTACCOUNTS.log
+  echo " " >> $PDI-ROOTACCOUNTS.log
+  echo $ROOTACCOUNTLIST >> $PDI-ROOTACCOUNTS.log
+  echo "------------------------------" >> $PDI-ROOTACCOUNTS.log
+fi
+
+
 #END_REMEDY
 
