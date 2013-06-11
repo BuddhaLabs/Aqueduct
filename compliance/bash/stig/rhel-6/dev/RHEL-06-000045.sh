@@ -87,5 +87,18 @@ PDI=RHEL-06-000045
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+for LIBDIR in /usr/lib /usr/lib64 /lib /lib64
+do
+  if [ -d $LIBDIR ]
+  then
+    for BADLIBFILE in `find $LIBDIR -type f -perm /7022 \( -name *.so* -o -name *.a* \)`
+    do
+      chmod go-w $BADLIBFILE
+    done
+  fi
+done
+
+
 #END_REMEDY
 
