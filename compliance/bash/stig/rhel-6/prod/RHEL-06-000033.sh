@@ -64,6 +64,12 @@ PDI=RHEL-06-000033
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
-chown root /etc/shadow
+if [ -a "/etc/passwd" ]
+    then
+        CUROWN=`stat -c %U /etc/passwd`;
+    if [ "$CUROWN" != "root" ]
+        then
+            chown root /etc/passwd
+fi
 #END_REMEDY
 
