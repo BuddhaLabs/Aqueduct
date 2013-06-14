@@ -59,10 +59,15 @@
 PDI=RHEL-06-000037
 #
 #BEGIN_CHECK
+if [ -a "/etc/gshadow" ]
+    then
+        CURGOWN=`stat -c %G /etc/gshadow`;
+
+if [ "$CURGOWN" != "root" ]
+    then
 #END_CHECK
 #BEGIN_REMEDY
-
-chgrp root /etc/gshadow
-
+        chgrp root /etc/gshadow
+fi
 #END_REMEDY
 
