@@ -61,8 +61,24 @@ PDI=RHEL-06-000038
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
-
-chmod 0000 /etc/gshadow
-
+if [ -a "/etc/gshadow" ]
+  then
+    # Pull the actual permissions
+    FILEPERMS=`stat -L --format='%04a' /etc/gshadow`
+ 
+    # Break the actual file octal permissions up per entity
+    FILESPECIAL=${FILEPERMS:0:1}
+    FILEOWNER=${FILEPERMS:1:1}
+    FILEGROUP=${FILEPERMS:2:1}
+    FILEOTHER=${FILEPERMS:3:1}
+ 
+    # Run check by 'and'ing the unwanted mask(7777)
+    if [ $(($FILESPECIAL&7)) != "0" ] || [ $(($FILEOWNER&7)) != "0" ] || [ $(($FILEGROUP&7)) != "0" ] || [ $(($FILEOTHER&7)) != "0" ]
+    then
+#END_CHECK
+#BEGIN_REMEDY
+        chmod 0000 /etc/gshadow
+    fi
+fi
 #END_REMEDY
 
