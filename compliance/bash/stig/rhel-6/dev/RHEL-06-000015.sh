@@ -67,16 +67,14 @@
 PDI=RHEL-06-000015
 #
 #BEGIN_CHECK
-#END_CHECK
-#BEGIN_REMEDY
-
 if [ -d /etc/yum.repos.d ]
 then
+#END_CHECK
+#BEGIN_REMEDY
    for i in `ls /etc/yum.repos.d/*.repo`
    do
       sed -i "s/gpgcheck=0/gpgcheck=1/g" $i
    done
 fi
-
 #END_REMEDY
 
