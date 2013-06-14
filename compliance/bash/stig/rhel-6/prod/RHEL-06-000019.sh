@@ -21,58 +21,60 @@
    
 #	
 #######################DISA INFORMATION##################################
-# Group ID (Vulid): RHEL-06-000027
-# Group Title: SRG-OS-000109
+# Group ID (Vulid): RHEL-06-000019
+# Group Title: SRG-OS-000248
 #
    
-# Rule ID: RHEL-06-000027_rule
-# Severity: medium
-# Rule Version (STIG-ID): RHEL-06-000027
-# Rule Title: The system must prevent the root account from logging in 
-# from virtual consoles.
+# Rule ID: RHEL-06-000019_rule
+# Severity: high
+# Rule Version (STIG-ID): RHEL-06-000019
+# Rule Title: There must be no .rhosts or hosts.equiv files on the system.
 #
-# Vulnerability Discussion: Preventing direct root login to virtual 
-# console devices helps ensure accountability for actions taken on the 
-# system using the root account.
+# Vulnerability Discussion: Trust files are convenient, but when used in 
+# conjunction with the R-services, they can allow unauthenticated access to 
+# a system.
 #
 # Responsibility: 
 # IAControls: 
 #
 # Check Content:
 #
-# To check for virtual console entries which permit root login, run the 
-# following command: 
-
-# grep '^vc/[0-9]' /etc/securetty
-
-# If any output is returned, then root logins over virtual console devices 
-# is permitted. 
-# If root login over virtual console devices is permitted, this is a 
-# finding.
+# The existence of the file "/etc/hosts.equiv" or a file named ".rhosts" 
+# inside a user home directory indicates the presence of an Rsh trust 
+# relationship. 
+# If these files exist, this is a finding.
 #
 # Fix Text: 
 #
-# To restrict root logins through the (deprecated) virtual console 
-# devices, ensure lines of this form do not appear in "/etc/securetty": 
+# The files "/etc/hosts.equiv" and "~/.rhosts" (in each user's home 
+# directory) list remote hosts and users that are trusted by the local 
+# system when using the rshd daemon. To remove these files, run the 
+# following command to delete them from any location. 
 
-# vc/1
-# vc/2
-# vc/3
-# vc/4
+# rm /etc/hosts.equiv
 
-# Note:  Virtual console entries are not limited to those listed above.  
-# Any lines starting with "vc/" followed by numerals should be removed.
+
+
+# $ rm ~/.rhosts
 
   
 #######################DISA INFORMATION##################################
 #	
 # Global Variables
-PDI=RHEL-06-000027
+PDI=RHEL-06-000019
+unalias rm
 #
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
-echo "console" > /etc/securetty
+rm /etc/hosts.equiv
 
+for in in `cat /etc/passwd | awk -F":" '{ print $6 }' `
+do
+    if [ -f ${i}/.rhosts ]
+    then
+        rm ${i}/.rhosts
+    fi
+done
 #END_REMEDY
 

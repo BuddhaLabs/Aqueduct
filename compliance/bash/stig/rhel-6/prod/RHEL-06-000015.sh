@@ -21,62 +21,60 @@
    
 #	
 #######################DISA INFORMATION##################################
-# Group ID (Vulid): RHEL-06-000019
-# Group Title: SRG-OS-000248
+# Group ID (Vulid): RHEL-06-000015
+# Group Title: SRG-OS-000103
 #
    
-# Rule ID: RHEL-06-000019_rule
-# Severity: high
-# Rule Version (STIG-ID): RHEL-06-000019
-# Rule Title: There must be no .rhosts or hosts.equiv files on the system.
+# Rule ID: RHEL-06-000015_rule
+# Severity: low
+# Rule Version (STIG-ID): RHEL-06-000015
+# Rule Title: The system package management tool must cryptographically 
+# verify the authenticity of all software packages during installation.
 #
-# Vulnerability Discussion: Trust files are convenient, but when used in 
-# conjunction with the R-services, they can allow unauthenticated access to 
-# a system.
+# Vulnerability Discussion: Ensuring all packages' cryptographic 
+# signatures are valid prior to installation ensures the provenance of the 
+# software and protects against malicious tampering.
 #
 # Responsibility: 
 # IAControls: 
 #
 # Check Content:
 #
-# The existence of the file "/etc/hosts.equiv" or a file named ".rhosts" 
-# inside a user home directory indicates the presence of an Rsh trust 
-# relationship. 
-# If these files exist, this is a finding.
+# To determine whether "yum" has been configured to disable "gpgcheck" 
+# for any repos, inspect all files in "/etc/yum.repos.d" and ensure the 
+# following does not appear in any sections: 
+
+# gpgcheck=0
+
+# A value of "0" indicates that "gpgcheck" has been disabled for that repo. 
+# If GPG checking is disabled, this is a finding.
+
+# If the "yum" system package management tool is not used to update the 
+# system, verify with the SA that installed packages are cryptographically 
+# signed.
 #
 # Fix Text: 
 #
-# The files "/etc/hosts.equiv" and "~/.rhosts" (in each user's home 
-# directory) list remote hosts and users that are trusted by the local 
-# system when using the rshd daemon. To remove these files, run the 
-# following command to delete them from any location. 
+# To ensure signature checking is not disabled for any repos, remove any 
+# lines from files in "/etc/yum.repos.d" of the form: 
 
-# rm /etc/hosts.equiv
-
-
-
-# $ rm ~/.rhosts
+# gpgcheck=0
 
   
 #######################DISA INFORMATION##################################
 #	
 # Global Variables
-PDI=RHEL-06-000019
+PDI=RHEL-06-000015
 #
 #BEGIN_CHECK
+if [ -d /etc/yum.repos.d ]
+then
 #END_CHECK
 #BEGIN_REMEDY
-
-unalias rm
-rm /etc/hosts.equiv
-
-for in in `cat /etc/passwd | awk -F":" '{ print $6 }' `
-do
-    if [ -f ${i}/.rhosts ]
-    then
-        rm ${i}/.rhosts
-    fi
-done
-
+   for i in `ls /etc/yum.repos.d/*.repo`
+   do
+      sed -i "s/gpgcheck=0/gpgcheck=1/g" $i
+   done
+fi
 #END_REMEDY
 
