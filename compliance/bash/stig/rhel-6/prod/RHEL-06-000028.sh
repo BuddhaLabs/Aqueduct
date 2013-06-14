@@ -69,7 +69,6 @@ PDI=RHEL-06-000028
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
-echo "console" > /etc/securetty
-
+sed -i -r -e '/^(\s*)ttyS[0-9]+/d' /etc/securetty
 #END_REMEDY
 
