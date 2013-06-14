@@ -61,8 +61,13 @@ PDI=RHEL-06-000034
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+if [ -a "/etc/shadow" ]
+    then
+        CURGOWN=`stat -c %G /etc/shadow`;
 
-chgrp root /etc/shadow
-
+if [ "$CURGOWN" != "root" ]
+    then
+        chgrp root /etc/shadow
+fi
 #END_REMEDY
 
