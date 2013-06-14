@@ -62,10 +62,24 @@
 PDI=RHEL-06-000035
 #
 #BEGIN_CHECK
+if [ -a "/etc/shadow" ]
+  then
+    # Pull the actual permissions
+    FILEPERMS=`stat -L --format='%04a' /etc/shadow`
+
+    # Break the actual file octal permissions up per entity
+    FILESPECIAL=${FILEPERMS:0:1}
+    FILEOWNER=${FILEPERMS:1:1}
+    FILEGROUP=${FILEPERMS:2:1}
+    FILEOTHER=${FILEPERMS:3:1}
+
+    # Run check by 'and'ing the unwanted mask(7777)
+    if [ $(($FILESPECIAL&7)) != "0" ] || [ $(($FILEOWNER&7)) != "0" ] || [ $(($FILEGROUP&7)) != "0" ] || [ $(($FILEOTHER&7)) != "0" ]
+    then
 #END_CHECK
 #BEGIN_REMEDY
-
-chmod 0000 /etc/shadow
-
+        chmod 0000 /etc/shadow
+    fi
+fi
 #END_REMEDY
 
