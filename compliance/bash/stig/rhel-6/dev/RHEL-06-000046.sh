@@ -86,5 +86,13 @@ PDI=RHEL-06-000046
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+for LIBDIR in /usr/lib /usr/lib64 /lib /lib64
+do
+  if [ -d $LIBDIR ]
+  then
+    find -L $LIBDIR -type f \! -user root -exec chown root {} \; 
+  fi
+done
+
 #END_REMEDY
 
