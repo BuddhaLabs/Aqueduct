@@ -65,5 +65,13 @@ PDI=RHEL-06-000053
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+PMxD=`grep ^PASS_MAX_DAYS /etc/login.defs | awk '{ print $2 }'`
+if [ $PMxD -gt 60 ]
+then 
+    sed  -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS    60/' /etc/login.defs
+fi
+
+
 #END_REMEDY
 
