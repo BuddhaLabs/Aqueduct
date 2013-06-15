@@ -73,5 +73,12 @@ PDI=RHEL-06-000050
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+PML=`grep ^PASS_MIN_LEN /etc/login.defs | awk '{ print $2 }'`
+if [ $PML -lt 14 ]
+then 
+    sed  -i 's/^PASS_MIN_LEN.*/^PASS_MIN_LEN    14/' /etc/login.defs
+fi
+
 #END_REMEDY
 
