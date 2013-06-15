@@ -85,5 +85,13 @@ PDI=RHEL-06-000048
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+for BINDIR in /bin /usr/bin /usr/local/bin /sbin  /usr/sbin /usr/local/sbin
+do
+    if [ -d $BINDIR ]
+    then
+        find -L $BINDIR -type f \! -user root -exec chown {} \;
+    fi
+done
+
 #END_REMEDY
 
