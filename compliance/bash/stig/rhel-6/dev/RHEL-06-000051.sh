@@ -65,5 +65,10 @@ PDI=RHEL-06-000051
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+PMD=`grep ^PASS_MIN_DAYS /etc/login.defs | awk '{ print $2 }'`
+if [ $PMD -lt 1 ]
+then 
+    sed  -i 's/^PASS_MIN_DAYS.*/PASS_MIN_DAYS    1/' /etc/login.defs
+fi
 #END_REMEDY
 
