@@ -63,5 +63,11 @@ PDI=RHEL-06-000054
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+PWA=`grep ^PASS_WARN_AGE /etc/login.defs | awk '{ print $2 }'`
+if [ $PWA -lt 7 ]
+then 
+    sed  -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE    7/' /etc/login.defs
+fi
 #END_REMEDY
 
