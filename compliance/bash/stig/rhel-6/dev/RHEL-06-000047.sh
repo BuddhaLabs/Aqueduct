@@ -85,5 +85,14 @@ PDI=RHEL-06-000047
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+for BINDIR in /bin /usr/bin /usr/local/bin /sbin  /usr/sbin /usr/local/sbin
+do
+    if [ -d $BINDIR ]
+    then
+        find -L $BINDIR -type f -perm /022 -exec chmod go-w {} \;
+    fi
+done
+
 #END_REMEDY
 
