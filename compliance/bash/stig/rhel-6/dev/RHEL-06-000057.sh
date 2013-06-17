@@ -66,7 +66,16 @@
 PDI=RHEL-06-000057
 #
 #BEGIN_CHECK
+
+grep ^password /etc/pam.d/system-auth | grep ucredit > /dev/null
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -eq 1 ]
+then
+    sed -i 's/pam_cracklib.so /pam_cracklib.so ucredit=-1 /' /etc/pam.d/system-auth
+fi
+
 #END_REMEDY
 
