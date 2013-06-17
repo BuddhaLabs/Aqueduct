@@ -67,6 +67,16 @@ PDI=RHEL-06-000058
 #
 #BEGIN_CHECK
 #END_CHECK
-#BEGIN_REMEDY
-#END_REMEDY
 
+grep ^password /etc/pam.d/system-auth | grep ocredit > /dev/null
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ $? -eq 1 ]
+then
+    sed -i 's/pam_cracklib.so /pam_cracklib.so ocredit=-1 /' /etc/pam.d/system-auth
+fi
+
+
+#END_REMEDY
