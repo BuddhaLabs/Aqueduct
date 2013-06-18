@@ -64,7 +64,16 @@
 PDI=RHEL-06-000060
 #
 #BEGIN_CHECK
+
+grep ^password /etc/pam.d/system-auth | grep difok > /dev/null
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -eq 1 ]
+then
+    sed -i 's/pam_cracklib.so /pam_cracklib.so difok=4 /' /etc/pam.d/system-auth
+fi
+
 #END_REMEDY
 
