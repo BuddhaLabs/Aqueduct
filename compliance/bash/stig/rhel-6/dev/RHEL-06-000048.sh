@@ -89,7 +89,7 @@ for BINDIR in /bin /usr/bin /usr/local/bin /sbin  /usr/sbin /usr/local/sbin
 do
     if [ -d $BINDIR ]
     then
-        find -L $BINDIR -type f \! -user root -exec chown {} \;
+        find -L $BINDIR -type f \! -user root -exec chown root {} \;
     fi
 done
 
