@@ -62,7 +62,19 @@
 PDI=RHEL-06-000065
 #
 #BEGIN_CHECK
+
+OWNER=`ls -lL /etc/grub.conf | awk '{ print $3}'`
+FILE=`ls -l /etc/grub.conf | awk '{ print $NF}'`
+FILE=/etc/$FILE
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$OWNER" != "root" ]
+then
+    chown root $FILE
+fi
+
+
 #END_REMEDY
 
