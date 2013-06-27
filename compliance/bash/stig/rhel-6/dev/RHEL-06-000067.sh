@@ -62,6 +62,20 @@
 PDI=RHEL-06-000067
 #
 #BEGIN_CHECK
+
+FILE=`ls -l /etc/grub.conf | awk '{ print $NF}'`
+FILE=/etc/$FILE
+ls -l $FILE | grep '^-rw-------' > /dev/null
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ $? -ne 0 ]
+then
+    chmod 0600 $FILE
+fi
+
+
 #END_CHECK
 #BEGIN_REMEDY
 #END_REMEDY
