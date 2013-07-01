@@ -67,7 +67,17 @@
 PDI=RHEL-06-000070
 #
 #BEGIN_CHECK
+
+grep "^PROMPT=no" /etc/sysconfig/init > /dev/null
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? != 0 ]
+then
+    sed -i 's/^PROMPT/#PROMPT/' /etc/sysconfig/init
+    echo "PROMPT=no" >> /etc/sysconfig/init 
+fi
+
 #END_REMEDY
 

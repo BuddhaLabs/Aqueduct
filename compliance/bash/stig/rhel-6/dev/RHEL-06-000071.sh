@@ -69,7 +69,17 @@
 PDI=RHEL-06-000071
 #
 #BEGIN_CHECK
+
+rpm -q screen > /dev/null
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? != 0 ]
+then
+    yum -y install screen --skip-broken > /dev/null 2>&1
+fi
+
+
 #END_REMEDY
 
