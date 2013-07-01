@@ -78,12 +78,6 @@ PDI=GEN005820
 	
 # Start-Lockdown
 
-if [ $? -eq 0 ]
-then
-  sed -i -e '/anongid/! s/\(.*\))/\1,anongid=-1\)/g' /etc/exports
-  exportfs -a
-fi
-
 grep -v anonuid /etc/exports > /dev/null
 if [ $? -eq 0 ]
 then
