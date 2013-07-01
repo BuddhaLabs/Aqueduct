@@ -73,7 +73,16 @@
 PDI=RHEL-06-000069
 #
 #BEGIN_CHECK
+
+grep "^SINGLE=/sbin/sulogin" /etc/sysconfig/init > /dev/null
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? != 0 ]
+then
+    sed -i 's/SINGLE/#SINGLE/' /etc/sysconfig/init
+    echo "SINGLE=/sbin/sulogin" >> /etc/sysconfig/init
+fi
 #END_REMEDY
 
