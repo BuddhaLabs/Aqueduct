@@ -70,7 +70,22 @@
 PDI=RHEL-06-000083
 #
 #BEGIN_CHECK
+
+I4CAAS=` sysctl net.ipv4.conf.all.accept_source_route | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $I4CAAS -ne 0 ]
+then
+    grep "^net.ipv4.conf.all.accept_source_route = 0" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "net.ipv4.conf.all.accept_source_route = 0" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w net.ipv4.conf.all.accept_source_route=0 > /dev/null
+fi
+
 #END_REMEDY
 

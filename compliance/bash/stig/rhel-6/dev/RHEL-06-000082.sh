@@ -81,7 +81,7 @@ I4IF=` sysctl net.ipv4.ip_forward | awk '{ print $NF}'`
 
 if [ $I4IF -ne 0 ]
 then
-    grep "^net.ipv4.ip_forward = 0" /etc/sysctl.conf
+    grep "^net\.ipv4\.ip_forward" /etc/sysctl.conf
     if [ $? != 0 ]
     then
         echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.conf
@@ -91,4 +91,3 @@ then
 fi
 
 #END_REMEDY
-
