@@ -73,5 +73,22 @@ PDI=RHEL-06-000082
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
+
+I4IF=` sysctl net.ipv4.ip_forward | awk '{ print $NF}'`
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ $I4IF -ne 0 ]
+then
+    grep "^net.ipv4.ip_forward = 0" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w net.ipv4.ip_forward=0 > /dev/null
+fi
+
 #END_REMEDY
 
