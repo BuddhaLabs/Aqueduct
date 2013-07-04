@@ -73,7 +73,24 @@
 PDI=RHEL-06-000078
 #
 #BEGIN_CHECK
+
+
+KRVS=` sysctl kernel.randomize_va_space | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $KRVS -lt 2 ]
+then
+    grep "^kernel.randomize_va_space" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "? is $?"
+        echo "kernel.randomize_va_space = 2" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w kernel.randomize_va_space=2 > /dev/null
+fi
+
 #END_REMEDY
 
