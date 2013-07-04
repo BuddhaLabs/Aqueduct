@@ -85,7 +85,6 @@ then
     grep "^kernel.randomize_va_space" /etc/sysctl.conf
     if [ $? != 0 ]
     then
-        echo "? is $?"
         echo "kernel.randomize_va_space = 2" >> /etc/sysctl.conf
     fi
 

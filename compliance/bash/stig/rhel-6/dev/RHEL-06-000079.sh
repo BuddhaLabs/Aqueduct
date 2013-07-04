@@ -76,4 +76,19 @@ PDI=RHEL-06-000079
 #END_CHECK
 #BEGIN_REMEDY
 #END_REMEDY
+KES=` sysctl kernel.exec-shield | awk '{ print $NF}'`
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ $KRVS -ne 1 ]
+then
+    grep "^kernel.exec-shield" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "kernel.exec-shield = 1" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w kernel.exec-shield=1 > /dev/null
+fi
 
