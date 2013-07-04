@@ -81,7 +81,7 @@ KES=` sysctl kernel.exec-shield | awk '{ print $NF}'`
 #END_CHECK
 #BEGIN_REMEDY
 
-if [ $KRVS -ne 1 ]
+if [ $KES -ne 1 ]
 then
     grep "^kernel.exec-shield" /etc/sysctl.conf
     if [ $? != 0 ]
