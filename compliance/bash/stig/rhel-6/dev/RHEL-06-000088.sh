@@ -69,7 +69,22 @@
 PDI=RHEL-06-000088
 #
 #BEGIN_CHECK
+
+I4CALM=` sysctl net.ipv4.conf.all.log_martians | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $I4CALM -ne 1 ]
+then
+    grep "^net.ipv4.conf.all.log_martians = 1" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "net.ipv4.conf.all.log_martians = 1" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w net.ipv4.conf.all.log_martians=1 > /dev/null
+fi
+
 #END_REMEDY
 
