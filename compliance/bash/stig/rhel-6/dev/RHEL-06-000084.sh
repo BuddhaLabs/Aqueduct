@@ -68,7 +68,22 @@
 PDI=RHEL-06-000084
 #
 #BEGIN_CHECK
+
+I4CAAR=` sysctl net.ipv4.conf.all.accept_redirects | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $I4CAAR -ne 0 ]
+then
+    grep "^net.ipv4.conf.all.accept_redirects = 0" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w net.ipv4.conf.all.accept_redirects=0 > /dev/null
+fi
+
 #END_REMEDY
 

@@ -69,7 +69,22 @@
 PDI=RHEL-06-000086
 #
 #BEGIN_CHECK
+
+I4CASR=` sysctl net.ipv4.conf.all.secure_redirects | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $I4CASR -ne 0 ]
+then
+    grep "^net.ipv4.conf.all.secure_redirects = 0" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
+    fi
+
+    sysctl -w net.ipv4.conf.all.secure_redirects=0 > /dev/null
+fi
+
 #END_REMEDY
 
