@@ -1,0 +1,73 @@
+###
+### This file contains functions written by and in 
+### support of the Aqueduct project. Aqueduct provides
+### server hardening automation.
+###
+
+
+
+edit_file () {
+
+    # version 0.1
+    # Takes options FILE, PDI, SHOULD_BE, BASE_STRING
+    # Figures out DATE, DIRNAME, BASENAME, OWNER, PERMS
+
+    # This assumes you have already tested the file and
+    # it does not contain the "SHOULD_BE" string.
+    
+    # Example:
+
+    # edit_file ./errno.test 366 "int main(VOID)" "int"
+
+    FILE=$1
+    PDI=$2
+    SHOULD_BE=$3
+    BASE_STRING=$4
+
+    if [ ! -f $FILE ]
+    then
+        echo "File $FILE not found.";
+        exit 1;
+    fi
+
+    BASENAME=`basename $FILE`;
+    DIRNAME=`dirname $FILE`;
+    DATE=`date +%Y-%j`;
+    OWNER=`stat -c "%U" $FILE`;
+    GROUP=`stat -c "%G" $FILE`;
+    PERMS=`stat -c "%a" $FILE`;
+
+    cp $FILE ${DIRNAME}/${BASENAME}.${DATE}.${PDI}
+
+    BASE_COUNT=`grep -c ^$BASE_STRING $FILE`;
+
+    if [ $BASE_COUNT -ne 0 ]
+    then
+        sed -i "/^$BASE_STRING/ c\
+        # Edited per PDI $PDI \n$SHOULD_BE" $FILE
+    else
+        echo "# Modified per PDI $PDI" >> $FILE
+        echo "$SHOULD_BE" >> $FILE
+    fi
+
+    NEW_OWNER=`stat -c "%U" $FILE`;
+    NEW_GROUP=`stat -c "%G" $FILE`;
+    NEW_PERMS=`stat -c "%a" $FILE`;
+
+    if [ $NEW_OWNER != $OWNER ]
+    then
+        chown $OWNER $FILE;
+    fi
+
+    if [ $NEW_GROUP != $GROUP ]
+    then
+        chgrp $GROUP $FILE;
+    fi
+
+    if [ $NEW_PERMS != $PERMS ]
+    then
+        chmod $PERMS $FILE;
+    fi
+
+}
+

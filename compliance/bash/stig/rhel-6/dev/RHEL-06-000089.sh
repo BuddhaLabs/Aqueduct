@@ -70,7 +70,29 @@
 PDI=RHEL-06-000089
 #
 #BEGIN_CHECK
+
+I4CDASR=` sysctl net.ipv4.conf.default.accept_source_route | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
-#END_REMEDY
 
+if [ $I4CDASR -ne 0 ]
+then
+    grep "^net.ipv4.conf.default.accept_source_route = 0" /etc/sysctl.conf
+    if [ $? != 0 ]
+    then
+        if [ -f ./aqueduct_functions ]
+        then
+            . ./aqueduct_functions
+        fi
+
+        edit_file "/etc/sysctl.conf" $PDI \
+            "net.ipv4.conf.default.accept_source_route = 0" \
+            "net.ipv4.conf.default.accept_source_route"
+
+    fi
+
+    sysctl -w net.ipv4.conf.default.accept_source_route=0 > /dev/null
+fi
+
+#END_REMEDY
