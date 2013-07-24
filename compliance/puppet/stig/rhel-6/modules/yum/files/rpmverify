@@ -1,0 +1,15 @@
+#!/bin/sh
+# How to interpret output:
+#       S file Size differs
+#       M Mode differs (includes permissions and file type)
+#       5 MD5 sum differs
+#       D Device major/minor number mismatch
+#       L readLink(2) path mismatch
+#       U User ownership differs
+#       G Group ownership differs
+#       T mTime differs
+#       P caPabilities differ
+
+rpm -qVa --nomtime | awk '$2!="c" {print $0}'
+
+exit 0

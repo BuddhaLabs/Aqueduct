@@ -1,0 +1,6 @@
+#!/bin/sh
+##### cron job to run yum update nightly ###############################
+
+/usr/bin/yum --quiet clean all
+/usr/bin/yum -q -R 30 -e 0 -d 0 -y update yum
+/usr/bin/yum -q -R 10 -e 0 -d 0 -y update

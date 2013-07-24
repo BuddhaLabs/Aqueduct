@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/usr/sbin/aide --check
+
+exit 0

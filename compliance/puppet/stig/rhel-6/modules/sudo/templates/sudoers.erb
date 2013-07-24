@@ -1,0 +1,4 @@
+# Allow members of the admins group to sudo, variable is in manifests/nodes.pp
+<% scope.lookupvar('shared::sudoers').split(",").each do |sudo| -%>
+<%= sudo %>
+<% end -%>

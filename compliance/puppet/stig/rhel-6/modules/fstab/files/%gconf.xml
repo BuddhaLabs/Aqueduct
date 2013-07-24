@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="media_autorun_never" mtime="1370638783" type="bool" value="true"/>
+	<entry name="media_automount" mtime="1370638768" type="bool" value="false"/>
+</gconf>

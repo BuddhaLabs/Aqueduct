@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -f /etc/suid-file-list ]; then
+        find / -mount -perm -4000 | diff /etc/suid-file-list -
+        find / -mount -perm -2000 | diff /etc/sgid-file-list -
+else
+        find / -mount -perm -4000 > /etc/suid-file-list
+        find / -mount -perm -2000 > /etc/sgid-file-list
+fi
+
+exit 0

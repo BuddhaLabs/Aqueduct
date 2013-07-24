@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/usr/sbin/aide --update
+cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+exit 0
