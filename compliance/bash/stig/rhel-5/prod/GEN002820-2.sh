@@ -34,6 +34,8 @@
 # |__________|_______________________|____________________|____________|
 # |    1.0   |   Initial Script      | Vincent C. Passaro | 1-Aug-2012 |
 # |          |   Creation            |                    |            |
+# |    1.1   |  Removed space from   | Leam Hall          | 26-Jul-2013|
+# |          |  grep                 |                    |            |
 # |__________|_______________________|____________________|____________|
 #	                                                                  
    
@@ -97,8 +99,8 @@ UNAME=$( uname -m )
 BIT64='x86_64'
 AUDITFILE='/etc/audit/audit.rules'
 
-AUDITCOUNT642=$( grep -c -e "-a exit,always -F arch=b64 -S fchmod " $AUDITFILE )
-AUDITCOUNT322=$( grep -c -e "-a exit,always -F arch=b32 -S fchmod " $AUDITFILE )	
+AUDITCOUNT642=$( grep -c -e "-a exit,always -F arch=b64 -S fchmod" $AUDITFILE )
+AUDITCOUNT322=$( grep -c -e "-a exit,always -F arch=b32 -S fchmod" $AUDITFILE )	
 # Start-Lockdown
 if [ $UNAME == $BIT64 ]
   then
