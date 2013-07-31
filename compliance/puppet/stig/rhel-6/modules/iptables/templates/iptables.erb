@@ -1,180 +1,68 @@
 *filter
-:INPUT ACCEPT [0:0]
-:FORWARD ACCEPT [0:0]
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
--A INPUT -i <%= localinterface %> -p icmp -m icmp --icmp-type any -m state --state NEW,ESTABLISHED -m comment --comment "000 Allow ICMP outgoing connections" -j ACCEPT
--A INPUT -s <%= ipaddress %>/32 -i <%= localinterface %> -m comment --comment "001 spoof self DROP" -j DROP
--A INPUT -s <%= ipaddress %>/32 -i <%= localinterface %> -m comment --comment "001 spoof self LOG" -j LOG --log-prefix "DROP SELF SPOOF: "
--A INPUT -s 10.0.0.0/8 -i <%= localinterface %> -m comment --comment "002 Spoof A DROP" -j DROP
--A INPUT -s 10.0.0.0/8 -i <%= localinterface %> -m comment --comment "002 Spoof A LOG" -j LOG --log-prefix "DROP SPOOF A: "
--A INPUT -s 172.16.0.0/12 -i <%= localinterface %> -m comment --comment "003 Spoof B DROP" -j DROP
--A INPUT -s 172.16.0.0/12 -i <%= localinterface %> -m comment --comment "003 Spoof B LOG" -j LOG --log-prefix "DROP SPOOF B: "
--A INPUT -s 192.168.0.0/16 -i <%= localinterface %> -m comment --comment "004 Spoof C DROP" -j DROP
--A INPUT -s 192.168.0.0/16 -i <%= localinterface %> -m comment --comment "004 Spoof C LOG" -j LOG --log-prefix "DROP SPOOF C: "
--A INPUT -s 224.0.0.0/4 -i <%= localinterface %> -m comment --comment "005 Spoof D DROP" -j DROP
--A INPUT -s 224.0.0.0/4 -i <%= localinterface %> -m comment --comment "005 Spoof D LOG" -j LOG --log-prefix "DROP SPOOF D: "
--A INPUT -s 240.0.0.0/5 -i <%= localinterface %> -m comment --comment "006 Spoof E DROP" -j DROP
--A INPUT -s 240.0.0.0/5 -i <%= localinterface %> -m comment --comment "006 Spoof E LOG" -j LOG --log-prefix "DROP SPOOF E: "
--A INPUT -s 127.0.0.0/8 -i <%= localinterface %> -m comment --comment "007 Spoof loopback DROP" -j DROP
--A INPUT -s 127.0.0.0/8 -i <%= localinterface %> -m comment --comment "007 Spoof loopback LOG" -j LOG --log-prefix "DROP SPOOF SELF: "
--A INPUT -i <%= localinterface %> -p udplite -m comment --comment "008 Drop all udplite connections" -j DROP
--A INPUT -i <%= localinterface %> -m state --state RELATED,ESTABLISHED -m comment --comment "009 Accept Incoming established" -j ACCEPT
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -m comment --comment "100 Accept Incoming SSH" -j ACCEPT
+-A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+-A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+-A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+-A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+-A INPUT -s 10.0.0.0/8 -j LOG --log-prefix "IP DROP SPOOF A: "
+-A INPUT -s 172.16.0.0/12 -j LOG --log-prefix "IP DROP SPOOF B: "
+-A INPUT -s 192.168.0.0/16 -j LOG --log-prefix "IP DROP SPOOF C: "
+-A INPUT -s 224.0.0.0/4 -j LOG --log-prefix "IP DROP MULTICAST D: "
+-A INPUT -s 240.0.0.0/5 -j LOG --log-prefix "IP DROP SPOOF E: "
+-A INPUT -d 127.0.0.0/8 -j LOG --log-prefix "IP DROP LOOPBACK: "
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A INPUT -i <%= localinterface %> -m state --state RELATED,ESTABLISHED -j ACCEPT
+# To restrict SSH, remove the previous line, then edit and uncomment the following line (replacing netwk and mask with appropriate values)
+#-A INPUT -s netwk/mask -m state --state NEW -p tcp --dport 22 -j ACCEPT
+<% if scope.lookupvar('shared::ftpserver') then %>
+-A INPUT -m state --state NEW -p tcp --dport 21 -j ACCEPT
+<% end -%>
+<% if scope.lookupvar('shared::webserver') then %>
+-A INPUT -m state --state NEW -p tcp --dport 80 -j ACCEPT
+#-A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT
+<% end -%>
 <% if scope.lookupvar('shared::syslogserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 514 -m state --state NEW,ESTABLISHED -m comment --comment "103 Allow UDP syslog" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 514 -m state --state NEW,ESTABLISHED -m comment --comment "104 Allow TCP syslog" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 514 -m state --state NEW,ESTABLISHED -m comment --comment "103 Allow UDP syslog" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 514 -m state --state NEW,ESTABLISHED -m comment --comment "104 Allow TCP syslog" -j ACCEPT 
 <% end -%>
 <% if scope.lookupvar('shared::ldapserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "105 Allow LDAP TCP 389 from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow LDAP UDP 389 from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "107 Allow LDAP TCP 636 from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "108 Allow LDAP UDP 636 from 144.51.102.75" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "105 Allow LDAP TCP 389" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow LDAP UDP 389" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "107 Allow LDAP TCP 636" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "108 Allow LDAP UDP 636" -j ACCEPT 
 <% end -%>
 <% if scope.lookupvar('shared::dnsserver') then %>
 -A INPUT -i <%= localinterface %> -p udp -m udp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "109 Allowing Incoming DNS UDP" -j ACCEPT 
 -A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "110 Allowing Incoming DNS TCP" -j ACCEPT 
 <% end -%>
 <% if scope.lookupvar('shared::mailserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 25 -m state --state NEW,ESTABLISHED -m comment --comment "111 Allow SMTP connections from 144.51.102.0/255.255.255.0" -j ACCEPT
--A INPUT -s 144.51.5.7/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 144.51.5.7" -j ACCEPT 
--A INPUT -s 144.51.5.9/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 144.51.5.9" -j ACCEPT 
--A INPUT -s 144.51.88.129/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 144.51.88.129" -j ACCEPT 
--A INPUT -s 144.51.88.131/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 144.51.88.131" -j ACCEPT 
--A INPUT -s 144.51.88.133/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 144.51.88.133" -j ACCEPT 
--A INPUT -s 63.239.65.39/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.65.39" -j ACCEPT 
--A INPUT -s 63.239.65.40/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.65.40" -j ACCEPT 
--A INPUT -s 63.239.67.1/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.67.1" -j ACCEPT 
--A INPUT -s 63.239.67.2/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.67.2" -j ACCEPT 
--A INPUT -s 63.239.67.9/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.67.9" -j ACCEPT
--A INPUT -s 63.239.67.10/32 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from 63.239.67.10" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 110 -m state --state NEW,ESTABLISHED -m comment --comment "113 Allow POP3 connections from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 995 -m state --state NEW,ESTABLISHED -m comment --comment "114 Allow POP3 SSL connections from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 143 -m state --state NEW,ESTABLISHED -m comment --comment "115 Allow IMAP connections from 144.51.102.0/255.255.255.0" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 25 -m state --state NEW,ESTABLISHED -m comment --comment "111 Allow SMTP connections from internal netwk/mask" -j ACCEPT
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow SMTP connections from external netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 110 -m state --state NEW,ESTABLISHED -m comment --comment "113 Allow POP3 connections from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 995 -m state --state NEW,ESTABLISHED -m comment --comment "114 Allow POP3 SSL connections from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 143 -m state --state NEW,ESTABLISHED -m comment --comment "115 Allow IMAP connections from internal netwk/mask" -j ACCEPT 
 <% end -%>
 <% if scope.lookupvar('shared::nfsserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "116 Allow NFS TCP portmapper from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "117 Allow NFS UDP portmapper from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "118 Allow NFS TCP 2049 from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "119 Allow NFS UDP 2049 from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "120 Allow NFS TCP 0:32768 from 144.51.102.0/255.255.255.0" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "121 Allow NFS UDP 0:32768 from 144.51.102.0/255.255.255.0" -j ACCEPT
-<% end -%>
-<% if scope.lookupvar('shared::ftpserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "122 Allow FTP connections from 144.51.102.0/255.255.255.0" -j ACCEPT
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "116 Allow NFS TCP portmapper from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "117 Allow NFS UDP portmapper from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "118 Allow NFS TCP 2049 from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "119 Allow NFS UDP 2049 from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "120 Allow NFS TCP 0:32768 from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "121 Allow NFS UDP 0:32768 from internal netwk/mask" -j ACCEPT
 <% end -%>
 <% if scope.lookupvar('shared::krbserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "123 Allow KRB TCP 88 from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "123 Allow KRB UDP 88 from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "124 Allow KRB TCP 464 (kpasswd) from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "124 Allow KRB UDP 464 (kpasswd) from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "125 Allow KRB TCP 749 (kadmin) from 144.51.102.75" -j ACCEPT 
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p udp -m udp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "125 Allow KRB UDP 749 (kadmin) from 144.51.102.75" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "123 Allow KRB TCP 88 from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "123 Allow KRB UDP 88 from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "124 Allow KRB TCP 464 (kpasswd) from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "124 Allow KRB UDP 464 (kpasswd) from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "125 Allow KRB TCP 749 (kadmin) from internal netwk/mask" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p udp -m udp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "125 Allow KRB UDP 749 (kadmin) from internal netwk/mask" -j ACCEPT 
 <% end -%>
 <% if scope.lookupvar('shared::puppetserver') then %>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 8140 -m comment --comment "151 Allow PUPPET from 144.51.102.0/255.255.255.0" -j ACCEPT 
+-A INPUT -s netwk/mask -i <%= localinterface %> -p tcp -m tcp --dport 8140 -m comment --comment "151 Allow PUPPET from internal netwk/mask" -j ACCEPT 
 <% end -%>
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 591 -m comment --comment "152 Allow Incoming HBSS 591" -j ACCEPT
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 8081 -m comment --comment "152 Allow Incoming HBSS 8081" -j ACCEPT
--A INPUT -s 144.51.102.0/24 -i <%= localinterface %> -p tcp -m tcp --dport 8082 -m comment --comment "152 Allow Incoming HBSS 8082" -j ACCEPT
--A INPUT -i <%= localinterface %> -p udp -m udp --sport 68 --dport 67 -m comment --comment "200 DHCP DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp --sport 68 --dport 67 -m comment --comment "200 DHCP LOG" -j LOG --log-prefix "DROP DHCP: "
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 137 -m comment --comment "201 udp NETBIOS7 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 137 -m comment --comment "201 udp NETBIOS7 LOG" -j LOG --log-prefix "DROP NETBIOS7: "
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 137 -m comment --comment "202 tcp NETBIOS7 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 137 -m comment --comment "202 tcp NETBIOS7 LOG" -j LOG --log-prefix "DROP NETBIOS7: "
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 138 -m comment --comment "203 udp NETBIOS8 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 138 -m comment --comment "203 udp NETBIOS8 LOG" -j LOG --log-prefix "DROP NETBIOS8: "
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 138 -m comment --comment "204 tcp NETBIOS8 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 138 -m comment --comment "204 tcp NETBIOS8 LOG" -j LOG --log-prefix "DROP NETBIOS8: "
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 139 -m comment --comment "205 udp NETBIOS9 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp --dport 139 -m comment --comment "205 udp NETBIOS9 LOG" -j LOG --log-prefix "DROP NETBIOS9: "
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 139 -m comment --comment "206 tcp NETBIOS9 DROP" -j DROP
--A INPUT -i <%= localinterface %> -p tcp -m tcp --dport 139 -m comment --comment "206 tcp NETBIOS9 LOG" -j LOG --log-prefix "DROP NETBIOS9: "
--A INPUT -i <%= localinterface %> -p udp -m udp --sport 520 --dport 520 -m comment --comment "207 RIP DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp --sport 520 --dport 520 -m comment --comment "207 RIP LOG" -j LOG --log-prefix "DROP RIP: "
--A INPUT -i <%= localinterface %> -p udp -m udp -m comment --comment "208 UDP IN DROP" -j DROP
--A INPUT -i <%= localinterface %> -p udp -m udp -m comment --comment "208 UDP IN LOG" -j LOG --log-prefix "IP DROP UDP-IN: "
--A INPUT -i <%= localinterface %> -p icmp -m icmp --icmp-type any -m comment --comment "209 ICMP IN DROP" -j DROP
--A INPUT -i <%= localinterface %> -p icmp -m icmp --icmp-type any -m comment --comment "209 ICMP IN LOG" -j LOG --log-prefix "IP DROP ICMP-IN: "
--A INPUT -i <%= localinterface %> -p tcp -m tcp -m comment --comment "210 TCP IN DROP" -j DROP
--A INPUT -i <%= localinterface %> -p tcp -m tcp -m comment --comment "210 TCP IN LOG" -j LOG --log-prefix "IP DROP TCP-IN: "
--A INPUT -i <%= localinterface %> -m comment --comment "211 ALL DROP" -j DROP
--A INPUT -i <%= localinterface %> -m comment --comment "211 ALL LOG" -j LOG --log-prefix "IP DROP PROTOCOL-X-IN: "
--A OUTPUT -o lo -m state --state NEW,ESTABLISHED -m comment --comment "000 Allow Outgoing Loopback Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -m state --state RELATED,ESTABLISHED -m comment --comment "001 Allow Established connections Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p icmp -m icmp --icmp-type any -m state --state NEW,ESTABLISHED -m comment --comment "002 Allow ICMP connections Outgoing" -j ACCEPT
-<% if scope.lookupvar('shared::dnsserver') then %>
--A OUTPUT -o <%= localinterface %> -p udp -m udp -m comment --comment "100 Allow outgoing udp DNS iptables Outgoing" -j ACCEPT 
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --sport 53 -m state --state NEW,ESTABLISHED -m comment --comment "101 Allow outgoing tcp DNS iptables Outgoing" -j ACCEPT 
-<% end -%>
--A OUTPUT -d 144.51.102.167/32 -o <%= localinterface %> -p tcp -m tcp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "103 Allow tcp DNS to 144.51.102.167 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.65/32 -o <%= localinterface %> -p tcp -m tcp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "103 Allow tcp DNS to 144.51.102.65 Outgoing" -j ACCEPT
--A OUTPUT -d 155.51.5.2/32 -o <%= localinterface %> -p tcp -m tcp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "103 Allow tcp DNS to 155.51.5.2 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.167/32 -o <%= localinterface %> -p udp -m udp -m comment --comment "104 Allow udp DNS to 144.51.102.167 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.65/32 -o <%= localinterface %> -p udp -m udp -m comment --comment "104 Allow udp DNS to 144.51.102.65 Outgoing" -j ACCEPT
--A OUTPUT -d 155.51.5.2/32 -o <%= localinterface %> -p udp -m udp --dport 53 -m state --state NEW,ESTABLISHED -m comment --comment "104 Allow udp DNS to 155.51.5.2 Outgoing" -j ACCEPT
-<% if scope.lookupvar('shared::mailserver') then %>
--A OUTPUT -d 144.51.88.129/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 144.51.88.129 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.88.131/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 144.51.88.131 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.88.133/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 144.51.88.133 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.65.39/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.65.39 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.65.40/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.65.40 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.67.1/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.67.1 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.67.10/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.67.10 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.67.2/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.67.2 Outgoing" -j ACCEPT 
--A OUTPUT -d 63.239.67.9/32 -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "106 Allow SMTP to 63.239.67.9 Outgoing" -j ACCEPT
-<% end -%>
-<% if scope.lookupvar('shared::nfsserver') then %>
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p tcp -m tcp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "107 Allow NFS TCP portmapper to 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p tcp -m tcp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "108 Allow NFS UDP portmapper to 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p tcp -m tcp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "109 Allow NFS TCP to 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p udp -m udp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "110 Allow NFS UDP to 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p tcp -m tcp --dport 0:33000 -m state --state NEW,ESTABLISHED -m comment --comment "111 Allow NFS TCP 0:32768 from 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p udp -m udp --dport 0:33000 -m state --state NEW,ESTABLISHED -m comment --comment "112 Allow NFS UDP 0:32768 from 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p tcp -m tcp --dport 500:1300 -m state --state NEW,ESTABLISHED -m comment --comment "113 Allow NFS TCP 500:1300 from 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT 
--A OUTPUT -d 144.51.102.0/24 -o <%= localinterface %> -p udp -m udp --dport 500:1300 -m state --state NEW,ESTABLISHED -m comment --comment "114 Allow NFS UDP 500:1300 from 144.51.102.0/255.255.255.0 Outgoing" -j ACCEPT
-<% end -%>
--A OUTPUT -d 144.51.102.160/32 -o <%= localinterface %> -p tcp -m tcp --dport 25 -m state --state NEW,ESTABLISHED -m comment --comment "115 Allow SMTP to 144.51.102.160 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.79/32 -o <%= localinterface %> -p tcp -m tcp --dport 25 -m state --state NEW,ESTABLISHED -m comment --comment "115 Allow SMTP to 144.51.102.79 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.79/32 -o <%= localinterface %> -p tcp -m tcp --dport 110 -m state --state NEW,ESTABLISHED -m comment --comment "116 Allow POP3 110 to 144.51.102.79 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.79/32 -o <%= localinterface %> -p tcp -m tcp --dport 995 -m state --state NEW,ESTABLISHED -m comment --comment "117 Allow POP3 995 to 144.51.102.79 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.79/32 -o <%= localinterface %> -p tcp -m tcp --dport 143 -m state --state NEW,ESTABLISHED -m comment --comment "118 Allow IMAP 143 to 144.51.102.79 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "119 Allow LDAP TCP 389 to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p udp -m udp --dport 389 -m state --state NEW,ESTABLISHED -m comment --comment "120 Allow LDAP UDP 389 to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "121 Allow LDAP TCP 636 to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p udp -m udp --dport 636 -m state --state NEW,ESTABLISHED -m comment --comment "122 Allow LDAP UDP 636 to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.73/32 -o <%= localinterface %> -p tcp -m tcp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "123 Allow NFS TCP 0:32768 to 144.51.102.73 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.73/32 -o <%= localinterface %> -p udp -m udp --dport 0:32768 -m state --state NEW,ESTABLISHED -m comment --comment "124 Allow NFS UDP 0:32768 to 144.51.102.73 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.73/32 -o <%= localinterface %> -p tcp -m tcp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "125 Allow NFS TCP 111 to 144.51.102.73 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.73/32 -o <%= localinterface %> -p udp -m udp --dport 111 -m state --state NEW,ESTABLISHED -m comment --comment "126 Allow NFS UDP 111 to 144.51.102.73 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.73/32 -o <%= localinterface %> -p tcp -m tcp --dport 2049 -m state --state NEW,ESTABLISHED -m comment --comment "127 Allow NFS TCP 2049 to 144.51.102.73 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.93/32 -o <%= localinterface %> -p tcp -m tcp --dport 119 -m state --state NEW,ESTABLISHED -m comment --comment "128 Allow NTP TCP 119 to 144.51.102.93 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.93/32 -o <%= localinterface %> -p udp -m udp --sport 123 --dport 123 -m state --state NEW,ESTABLISHED -m comment --comment "129 Allow NTP UDP 123 to 144.51.102.93 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 514 -m state --state NEW,ESTABLISHED -m comment --comment "130 Allow SYSLOG to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "131 Allow KERBEROS to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p udp -m udp --dport 88 -m state --state NEW,ESTABLISHED -m comment --comment "131 Allow KERBEROS to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "132 Allow KERBEROS password changes to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p udp -m udp --dport 464 -m state --state NEW,ESTABLISHED -m comment --comment "132 Allow KERBEROS password changes to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p tcp -m tcp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "133 Allow KERBEROS administration to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.75/32 -o <%= localinterface %> -p udp -m udp --dport 749 -m state --state NEW,ESTABLISHED -m comment --comment "134 Allow KERBEROS administration to 144.51.102.75 Outgoing" -j ACCEPT
--A OUTPUT -d 144.51.102.70/32 -o <%= localinterface %> -p tcp -m tcp --dport 8140 -m state --state NEW,ESTABLISHED -m comment --comment "134 Allow PUPPET to 144.51.102.70 Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -m comment --comment "200 Allow ssh Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 21 -m state --state NEW,ESTABLISHED -m comment --comment "201 Allow ftp Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p udp -m udp --sport 32769:65535 --dport 33434:33523 -m state --state NEW,ESTABLISHED -m comment --comment "202 Allow traceroute Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 2401 -m state --state NEW,ESTABLISHED -m comment --comment "203 Allow cvs Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 9418 -m state --state NEW,ESTABLISHED -m comment --comment "204 Allow GIT Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 873 -m state --state NEW,ESTABLISHED -m comment --comment "205 Allow rsync Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 80 -m state --state NEW,ESTABLISHED -m comment --comment "206 Allow http Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 443 -m state --state NEW,ESTABLISHED -m comment --comment "207 Allow https Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 8080 -m state --state NEW,ESTABLISHED -m comment --comment "208 Allow http(8080) Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 9100 -m state --state NEW,ESTABLISHED -m comment --comment "209 Allow Printing Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp --dport 993 -m state --state NEW,ESTABLISHED -m comment --comment "210 Allow IMAPS Outgoing" -j ACCEPT
--A OUTPUT -o <%= localinterface %> -p udp -m udp -m state --state NEW,ESTABLISHED -m comment --comment "211 LOG DROP UDP Outgoing" -j LOG
--A OUTPUT -o <%= localinterface %> -p udp -m udp -m state --state NEW,ESTABLISHED -m comment --comment "212 DROP UDP Outgoing" -j DROP
--A OUTPUT -o <%= localinterface %> -p icmp -m icmp --icmp-type any -m state --state NEW,ESTABLISHED -m comment --comment "213 LOG DROP ICMP Outgoing" -j LOG
--A OUTPUT -o <%= localinterface %> -p icmp -m icmp --icmp-type any -m state --state NEW,ESTABLISHED -m comment --comment "214 DROP ICMP Outgoing" -j DROP
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "215 LOG DROP TCP Outgoing" -j LOG
--A OUTPUT -o <%= localinterface %> -p tcp -m tcp -m state --state NEW,ESTABLISHED -m comment --comment "216 DROP TCP Outgoing" -j DROP
--A OUTPUT -o <%= localinterface %> -m state --state NEW,ESTABLISHED -m comment --comment "217 LOG DROP ALL Outgoing" -j LOG
--A OUTPUT -o <%= localinterface %> -m state --state NEW,ESTABLISHED -m comment --comment "218 DROP ALL Outgoing" -j DROP
+-A INPUT --reject-with icmp-host-prohibited -j REJECT
+-A FORWARD --reject-with icmp-host-prohibited -j REJECT
 COMMIT
