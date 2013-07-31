@@ -1,6 +1,7 @@
 class shared (	$server = false,
 		$dnsserver = false,
 		$ftpserver = false,
+		$webserver = false,
 		$gitserver = false,
 		$krbserver = false,
 		$ldapserver = false,
@@ -68,6 +69,7 @@ node 'fileserver.domain.com' {
 			ftpserver => true,
 			gitserver => true,
 			nfsserver => true,
+			webserver => true;
 	}
 }
 
