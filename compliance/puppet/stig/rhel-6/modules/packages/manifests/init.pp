@@ -111,35 +111,25 @@ class packages {
 			recurse => true;
 	}
 
-	# Configure Avahi if Necessary
+	# Configure Avahi if Necessary, requires avahi.lns
 	#augeas {
 	#	"Serve Avahi Only via Required Protocol":
 	#		context => "/files/etc/avahi/avahi-daemon.conf",
-	#		lens    => "shellvars.lns",
-	#		incl    => "/etc/avahi/avahi-daemon.conf",
 	#		changes => [
 	#			"set use-ipv6 no",
 	#			#"set use-ipv4 no", uncomment this and comment out above line in using ipv6
 	#		];
 	#	"Check Avahi Responses' TTL Field":
 	#		context => "/files/etc/avahi/avahi-daemon.conf",
-	#		lens    => "shellvars.lns",
-	#		incl    => "/etc/avahi/avahi-daemon.conf",
 	#		changes => "set check-reponse-ttl yes";
 	#	"Prevent Other Programs from Using Avahi's Port":
 	#		context => "/files/etc/avahi/avahi-daemon.conf",
-	#		lens    => "shellvars.lns",
-	#		incl    => "/etc/avahi/avahi-daemon.conf",
 	#		changes => "set disallow-other-stacks yes";
 	#	"Disable Avahi Publishing":
 	#		context => "/files/etc/avahi/avahi-daemon.conf",
-	#		lens    => "shellvars.lns",
-	#		incl    => "/etc/avahi/avahi-daemon.conf",
 	#		changes => "set disallow-other-stacks yes";
 	#	"Restrict Information Published by Avahi":
 	#		context => "/files/etc/avahi/avahi-daemon.conf",
-	#		lens    => "shellvars.lns",
-	#		incl    => "/etc/avahi/avahi-daemon.conf",
 	#		changes => [
 	#			"set disable-user-service-publishing yes",
 	#			"set publish-addresses no",
@@ -149,24 +139,20 @@ class packages {
 	#		];
 	#}
 
-	# Configure the CUPS Service if Necessary
+	# Configure the CUPS Service if Necessary, requires cups.lns
 	#augeas {
 	#	"Disable Printer Browsing Entirely if Possible":
 	#		context => "/files/etc/cups/cupsd.conf",
-	#		lens    => "spacevars.lns",
-	#		incl    => "/etc/cups/cupsd.conf",
 	#		changes => "set Browsing Off";
 	#	"Disable Print Server Capabilities":
 	#		context => "/files/etc/cups/cupsd.conf",
-	#		lens    => "spacevars.lns",
-	#		incl    => "/etc/cups/cupsd.conf",
 	#		changes => [
 	#			"rm Port",
 	#			"set Listen localhost:631",
 	#		];
 	#}
 
-	# Configure vsftpd Service if Necessary, follow prose guidance for more instructions
+	# Configure vsftpd Service if Necessary, follow prose guidance for more instructions, requires vsftpd.lns
 	#augeas {
 	#	"Enable Logging of All FTP Transactions":
 	#		context => "/files/etc/vsftpd/vsftpd.conf",
