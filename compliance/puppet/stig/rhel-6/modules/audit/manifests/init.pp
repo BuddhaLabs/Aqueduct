@@ -35,41 +35,41 @@ class audit {
 			require    => Package["audit"],
 	}
 
-	# Values come from suggested settings in prose guide, see man auditd.conf for more options
+	# Values come from suggested settings in prose guide, see man auditd.conf for more options, requires simplevars.lns
 	augeas {
 		"Configure auditd Number of Logs Retained":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set num_logs 5";
 		"Configure auditd Max Log File Size":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set max_log_file 6";
 		"Configure auditd max_log_file_action Upon Reaching Maximum Log Size":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set max_log_file_action rotate";
 		"Configure auditd space_left Action on Low Disk Space":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set space_left_action email";
 		"Configure auditd admin_space_left Action on Low Disk Space":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set admin_space_left_action single";
 		"Configure auditd mail_acct Action on Low Disk Space":
 			context => "/files/etc/audit/auditd.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audit/auditd.conf",
 			changes => "set action_mail_acct root";
 		"Configure auditd to use audispd plugin":
 			context => "/files/etc/audisp/plugins.d/syslog.conf",
-			lens    => "shellvars.lns",
+			lens    => "simplevars.lns",
 			incl    => "/etc/audisp/plugins.d/syslog.conf",
 			changes => "set active yes",
 			notify  => Service["auditd"];
