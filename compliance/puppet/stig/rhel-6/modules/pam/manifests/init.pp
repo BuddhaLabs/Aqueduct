@@ -129,11 +129,6 @@ class pam {
 			lens    => "login_defs.lns",
 			incl    => "/etc/login.defs",
 			changes => "set ENCRYPT_METHOD SHA512";
-		"Set Password Hashing Algorithm in /etc/libuser.conf":
-			context => "/files/etc/libuser.conf",
-			lens    => "shellvars.lns",
-			incl    => "/etc/libuser.conf",
-			changes => "set crypt_style sha512";
 
 	# sshd includes password-auth, not system-auth, one possible solution to enable pam_lastlog.so for SSH follows
 	#	"Add pam_lastlog.so to sshd":
@@ -146,5 +141,10 @@ class pam {
 	#			"set sshd/01/argument[1] showfailed",
 	#		],
 	#		onlyif  => "match sshd/*[type='session'][module='pam_lastlog.so'] size == 0";
+	}
+
+	exec {
+		"Set Password Hashing Algorithm in /etc/libuser.conf":
+			command => "/bin/sed -i 's/crypt_style[ \t]*=[ \t]*md5/crypt_style = sha512/g' /etc/libuser.conf";
 	}
 }
