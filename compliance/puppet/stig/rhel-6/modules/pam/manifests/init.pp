@@ -37,19 +37,22 @@ class pam {
 			owner => root,
 			group => root,
 			mode  => 000;
+	}
 
 	augeas {
 		"Limit the Number of Concurrent Login Sessions Allowed Per User":
 			context => "/files/etc/security/limits.conf",
 			changes => [
-				"set domain *",
-				"set domain[.='*']/type hard",
-				"set domain[.='*']/item maxlogins",
-				"set domain[.='*']/value 10",
+				"rm domain[.='*'][./type='hard and ./item='maxlogins']",
+				"set domain[last() + 1] '*'",
+				"set domain[last()]/type 'hard'",
+				"set domain[last()]/item 'maxlogins'",
+				"set domain[last()]/value 10",
 			];
-		"Prevent Log In to Accounts With Empty Password":
-			context => "/files/etc/pam.d/system-auth",
-			changes => "rm *[argument=\'nullok\']";
+		# This feels like a bug in SSG
+		#"Prevent Log In to Accounts With Empty Password":
+		#	context => "/files/etc/pam.d/system-auth",
+		#	changes => "rm *[argument=\'nullok\']";
 		"Prevent Log In to Accounts With Empty Password":
 			context => "/files/etc/pam.d",
 			changes => [
