@@ -24,6 +24,7 @@ class shared (	$server = false,
 	class { "banner": }
 	class { "cron": }
 	class { "fstab": }
+	class { "init": }
 	class { "iptables": }
 	class { "kernel": }
 	class { "named": }
