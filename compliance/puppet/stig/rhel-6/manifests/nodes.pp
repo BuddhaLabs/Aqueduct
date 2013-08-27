@@ -6,6 +6,7 @@ class shared (	$server = false,
 		$krbserver = false,
 		$ldapserver = false,
 		$mailserver = false,
+		$needs_x11 = true,
 		$nfsbackupserver = false,
 		$nfsserver = false,
 		$puppetserver = false,
@@ -17,6 +18,7 @@ class shared (	$server = false,
 	$syslogserver_ip = "10.10.10.1"
 
 	$sudoers = "%admins  ALL=(ALL)       ALL"
+	#$nfs_server_fqdn = "fileserver.domain.com"
 
 	class { "accounts": }
 	class { "aide": }
@@ -29,6 +31,7 @@ class shared (	$server = false,
 	class { "kernel": }
 	class { "named": }
 	class { "networking": }
+	#class { "nfs": nfs_server_fqdn => $nfs_server_fqdn; }
 	class { "ntp": }
 	class { "packages": }
 	class { "pam": }
@@ -49,6 +52,7 @@ node 'ldap.domain.com' {
 			server       => true,
 			krbserver    => true,
 			ldapserver   => true,
+			needs_x11    => false,
 			syslogserver => true;
 	}
 }
@@ -58,6 +62,7 @@ node 'backup.domain.com' {
 	class {
 		"shared":
 			server          => true,
+			needs_x11       => false,
 			nfsbackupserver => true;
 	}
 }
@@ -69,6 +74,7 @@ node 'fileserver.domain.com' {
 			server    => true,
 			ftpserver => true,
 			gitserver => true,
+			needs_x11 => false,
 			nfsserver => true,
 			webserver => true;
 	}
@@ -79,6 +85,7 @@ node 'puppet.domain.com' {
 	class {
 		"shared":
 			server       => true,
+			needs_x11    => false,
 			puppetserver => true;
 	}
 }
@@ -88,6 +95,7 @@ node 'mail.domain.com' {
 	class {
 		"shared":
 			server     => true,
+			needs_x11  => false,
 			mailserver => true;
 	}
 }
@@ -97,6 +105,7 @@ node 'named.domain.com' {
 	class {
 		"shared":
 			server    => true,
+			needs_x11 => false,
 			dnsserver => true;
 	}
 }
