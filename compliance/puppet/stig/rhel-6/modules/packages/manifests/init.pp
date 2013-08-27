@@ -34,55 +34,58 @@ class packages {
 			"bind", # if named must be enabled, follow prose guide instructions for configuration
 			"cronie-anacron",
 			"dhcp", # if dhcp must be enabled, follow prose guide instructions for configuration
-			"nfs", # if nfs must be enabled, follow prose guide instructions for configuration
 			"sendmail",
 			"vsftpd", # if vsftpd must be enabled, uncomment the following vsftpd section
 		]:
 			ensure  => absent,
 			require => Class["yum"];
+	}
 
-		# yum groupremove "X Window System"
-		#[
-		#	"xorg-x11-drivers",
-		#	"xorg-x11-server-Xorg",
-		#	"xorg-x11-xauth",
-		#	"xorg-x11-xinit",
-		#	"firstboot",
-		#	"glx-utils",
-		#	"hal",
-		#	"plymouth-system-theme",
-		#	"spice-vdagent",
-		#	"subscription-manager-firstboot",
-		#	"wacomexpresskeys",
-		#	"wdaemon",
-		#	"xorg-x11-server-utils",
-		#	"xorg-x11-utils",
-		#	"xvattr",
-		#]:
-		#	ensure  => absent,
-		#	require => Class["yum"];
+	if !$shared::needs_x11 {
+		package {
+			# yum groupremove "X Window System"
+			[
+				"xorg-x11-drivers",
+				"xorg-x11-server-Xorg",
+				"xorg-x11-xauth",
+				"xorg-x11-xinit",
+				"firstboot",
+				"glx-utils",
+				"hal",
+				"plymouth-system-theme",
+				"spice-vdagent",
+				"subscription-manager-firstboot",
+				"wacomexpresskeys",
+				"wdaemon",
+				"xorg-x11-server-utils",
+				"xorg-x11-utils",
+				"xvattr",
+			]:
+				ensure  => absent,
+				require => Class["yum"];
+		}
 	}
 
 	file {
 		# Disable All GNOME Thumbnailers
-		[
-			"/etc/gconf/gconf.xml.mandatory/desktop",
-			"/etc/gconf/gconf.xml.mandatory/desktop/gnome",
-			"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers",
-		]:
-			ensure => directory;
+		#[
+		#	"/etc/gconf/gconf.xml.mandatory/desktop",
+		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome",
+		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers",
+		#]:
+		#	ensure => directory;
 
-		[
-			"/etc/gconf/gconf.xml.mandatory/desktop/%gconf.xml",
-			"/etc/gconf/gconf.xml.mandatory/desktop/gnome/%gconf.xml",
-		]:
-			ensure => present;
+		#[
+		#	"/etc/gconf/gconf.xml.mandatory/desktop/%gconf.xml",
+		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome/%gconf.xml",
+		#]:
+		#	ensure => present;
 
-		"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers/%gconf.xml":
-			owner => gdm,
-			group => gdm,
-			mode  => 600,
-			source => "puppet:///modules/packages/%gconf.xml";
+		#"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers/%gconf.xml":
+		#	owner => gdm,
+		#	group => gdm,
+		#	mode  => 600,
+		#	source => "puppet:///modules/packages/%gconf.xml";
 
 		# Verify that Shared Library Files Have Restrictive Permissions and Root Ownership
 		[
