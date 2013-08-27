@@ -22,6 +22,29 @@
 #	None
 ############################################################
 class named {
+	if $shared::dnsserver {
+		class { "named::server": }
+	}
+	else {
+		package {
+			[
+				"bind",
+				"bind-chroot",
+			]:
+				ensure  => absent,
+				require => Class["yum"];
+		}
+
+		service {
+			"named":
+				ensure    => false,
+				enable    => false,
+				hasstatus => true;
+		}
+	}
+}
+
+class named::server {
 	package {
 		[
 			"bind-chroot",
@@ -69,11 +92,12 @@ class named {
 			owner   => root,
 			group   => root,
 			mode    => 755;
-		"/etc/named.conf":
-			owner   => root,
-			group   => named,
-			mode    => 640,
-			source  => "puppet:///modules/named/named.conf";
+		#This can be uncommented after named.conf is created and places in named/files/
+		#"/etc/named.conf":
+		#	owner   => root,
+		#	group   => named,
+		#	mode    => 640,
+		#	source  => "puppet:///modules/named/named.conf";
 		"/etc/sysconfig/named":
 			owner   => root,
 			group   => root,
