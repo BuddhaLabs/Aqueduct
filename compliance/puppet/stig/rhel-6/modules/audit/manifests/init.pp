@@ -35,8 +35,20 @@ class audit {
 			require    => Package["audit"],
 	}
 
+	file {
+		"/var/log/audit/audit.log":
+			owner => root,
+			group => root,
+			mode  => 600;
+	}
+
 	# Values come from suggested settings in prose guide, see man auditd.conf for more options, requires simplevars.lns
 	augeas {
+		"Configure auditd log_file File Name":
+			context => "/files/etc/audit/auditd.conf",
+			lens    => "simplevars.lns",
+			incl    => "/etc/audit/auditd.conf",
+			changes => "set log_file /var/log/audit/audit.log";
 		"Configure auditd Number of Logs Retained":
 			context => "/files/etc/audit/auditd.conf",
 			lens    => "simplevars.lns",
@@ -73,6 +85,16 @@ class audit {
 			incl    => "/etc/audisp/plugins.d/syslog.conf",
 			changes => "set active yes",
 			notify  => Service["auditd"];
+		"Configure auditd disk_full_action Action on Audit Storage Full":
+			context => "/files/etc/audit/auditd.conf",
+			lens    => "simplevars.lns",
+			incl    => "/etc/audit/auditd.conf",
+			changes => "set disk_full_action syslog";
+		"Configure auditd disk_error_action Action on Disk Errors":
+			context => "/files/etc/audit/auditd.conf",
+			lens    => "simplevars.lns",
+			incl    => "/etc/audit/auditd.conf",
+			changes => "set disk_error_action syslog";
 	}
 
 	file {
