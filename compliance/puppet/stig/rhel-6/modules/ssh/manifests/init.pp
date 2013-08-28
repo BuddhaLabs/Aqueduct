@@ -57,6 +57,7 @@ class ssh {
 	Sshkey <<| |>>
 
 	augeas {
+		# RHEL-06-000227
 		"Allow Only SSH Protocol 2":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -64,6 +65,7 @@ class ssh {
 			changes => [
 				"set Protocol 2",
 			];
+		# RHEL-06-000230
 		"Set SSH Idle Timeout Interval":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -71,6 +73,7 @@ class ssh {
 			changes => [
 				"set ClientAliveInterval 900",
 			];
+		# RHEL-06-000231
 		"Set SSH Client Alive Count":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -78,6 +81,7 @@ class ssh {
 			changes => [
 				"set ClientAliveCountMax 0"
 			];
+		# RHEL-06-000234
 		"Disable SSH Support for .rhosts Files":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -85,6 +89,7 @@ class ssh {
 			changes => [
 				"set IgnoreRhosts yes"
 			];
+		# RHEL-06-000236
 		"Disable Host-Based Authentication":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -92,6 +97,7 @@ class ssh {
 			changes => [
 				"set HostbasedAuthentication no",
 			];
+		# RHEL-06-000237
 		"Disable SSH Root Login":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -99,6 +105,7 @@ class ssh {
 			changes => [
 				"set PermitRootLogin no",
 			];
+		# RHEL-06-000239
 		"Disable SSH Access via Empty Passwords":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -106,6 +113,7 @@ class ssh {
 			changes => [
 				"set PermitEmptyPasswords no",
 			];
+		# RHEL-06-000240
 		"Enable SSH Warning Banner":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -113,6 +121,7 @@ class ssh {
 			changes => [
 				"set Banner /etc/issue",
 			];
+		# RHEL-06-000241
 		"Do Not Allow SSH Environment Options":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
@@ -120,6 +129,15 @@ class ssh {
 			changes => [
 				"set PermitUserEnvironment no",
 			];
+		# RHEL-06-000507
+		"Print the Last Successful Login Date and Time":
+			context => "/files/etc/ssh/sshd_config",
+			lens    => "sshd.lns",
+			incl    => "/etc/ssh/sshd_config",
+			changes => [
+				"set PrintLastLog yes",
+			];
+		# RHEL-06-000243
 		"Use Only Approved Ciphers":
 			context => "/files/etc/ssh/sshd_config",
 			lens    => "sshd.lns",
