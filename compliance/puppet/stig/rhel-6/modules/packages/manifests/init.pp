@@ -66,27 +66,30 @@ class packages {
 		}
 	}
 
+	if $shared::needs_gnome {
+		file {
+			# Disable All GNOME Thumbnailers
+			[
+				"/etc/gconf/gconf.xml.mandatory/desktop",
+				"/etc/gconf/gconf.xml.mandatory/desktop/gnome",
+				"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers",
+			]:
+				ensure => directory;
+
+			[
+				"/etc/gconf/gconf.xml.mandatory/desktop/%gconf.xml",
+				"/etc/gconf/gconf.xml.mandatory/desktop/gnome/%gconf.xml",
+			]:
+				ensure => present;
+
+			"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers/%gconf.xml":
+				owner  => gdm,
+				group  => gdm,
+				mode   => 600,
+				source => "puppet:///modules/packages/%gconf.xml";
+	}
+
 	file {
-		# Disable All GNOME Thumbnailers
-		#[
-		#	"/etc/gconf/gconf.xml.mandatory/desktop",
-		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome",
-		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers",
-		#]:
-		#	ensure => directory;
-
-		#[
-		#	"/etc/gconf/gconf.xml.mandatory/desktop/%gconf.xml",
-		#	"/etc/gconf/gconf.xml.mandatory/desktop/gnome/%gconf.xml",
-		#]:
-		#	ensure => present;
-
-		#"/etc/gconf/gconf.xml.mandatory/desktop/gnome/thumbnailers/%gconf.xml":
-		#	owner => gdm,
-		#	group => gdm,
-		#	mode  => 600,
-		#	source => "puppet:///modules/packages/%gconf.xml";
-
 		# Verify that Shared Library Files Have Restrictive Permissions and Root Ownership
 		[
 			"/lib",

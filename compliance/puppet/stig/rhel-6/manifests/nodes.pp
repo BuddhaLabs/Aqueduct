@@ -6,6 +6,7 @@ class shared (	$server = false,
 		$krbserver = false,
 		$ldapserver = false,
 		$mailserver = false,
+		$needs_gnome = true,
 		$needs_x11 = true,
 		$nfsbackupserver = false,
 		$nfsserver = false,
@@ -53,6 +54,7 @@ node 'ldap.domain.com' {
 			krbserver    => true,
 			ldapserver   => true,
 			needs_x11    => false,
+			needs_gnome  => false,
 			syslogserver => true;
 	}
 }
@@ -63,6 +65,7 @@ node 'backup.domain.com' {
 		"shared":
 			server          => true,
 			needs_x11       => false,
+			needs_gnome     => false,
 			nfsbackupserver => true;
 	}
 }
@@ -71,12 +74,13 @@ node 'backup.domain.com' {
 node 'fileserver.domain.com' {
 	class {
 		"shared":
-			server    => true,
-			ftpserver => true,
-			gitserver => true,
-			needs_x11 => false,
-			nfsserver => true,
-			webserver => true;
+			server      => true,
+			ftpserver   => true,
+			gitserver   => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			nfsserver   => true,
+			webserver   => true;
 	}
 }
 
@@ -86,6 +90,7 @@ node 'puppet.domain.com' {
 		"shared":
 			server       => true,
 			needs_x11    => false,
+			needs_gnome  => false,
 			puppetserver => true;
 	}
 }
@@ -94,9 +99,10 @@ node 'puppet.domain.com' {
 node 'mail.domain.com' {
 	class {
 		"shared":
-			server     => true,
-			needs_x11  => false,
-			mailserver => true;
+			server      => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			mailserver  => true;
 	}
 }
 
@@ -104,9 +110,10 @@ node 'mail.domain.com' {
 node 'named.domain.com' {
 	class {
 		"shared":
-			server    => true,
-			needs_x11 => false,
-			dnsserver => true;
+			server      => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			dnsserver   => true;
 	}
 }
 
