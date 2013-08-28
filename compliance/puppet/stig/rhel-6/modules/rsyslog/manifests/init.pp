@@ -46,7 +46,7 @@ class rsyslog {
 			ensure    => true,
 			enable    => true,
 			hasstatus => true,
-			require   => [Package["rsyslog"],Service["syslog"]];
+			require   => Package["rsyslog"];
 	}
 
 	file {
