@@ -87,6 +87,7 @@ class packages {
 				group  => gdm,
 				mode   => 600,
 				source => "puppet:///modules/packages/%gconf.xml";
+		}
 	}
 
 	file {
