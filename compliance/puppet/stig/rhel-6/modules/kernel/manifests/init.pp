@@ -42,10 +42,11 @@ class kernel {
 		"Disable Core Dumps for All Users":
 			context => "/files/etc/security/limits.conf",
 			changes => [
-				"set domain *",
-				"set domain[.='*']/type hard",
-				"set domain[.='*']/item core",
-				"set domain[.='*']/value 0",
+				"rm domain[.='*'][./type='hard' and ./item='core']",
+				"set domain[last() + 1] '*'",
+				"set domain[last()]/type 'hard'",
+				"set domain[last()]/item 'core'",
+				"set domain[last()]/value 0",
 			];
 		"Ensure SELinux State is Enforcing":
 			context => "/files/etc/selinux/config",

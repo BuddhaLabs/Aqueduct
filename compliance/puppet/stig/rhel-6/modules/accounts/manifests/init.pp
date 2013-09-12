@@ -21,13 +21,6 @@
 #	None
 ############################################################
 class accounts {
-	file {
-		# Uncomment this to disable direct root logins instead of
-		# "Restrict Virtual Console Root Logins" and "Restrict Serial Port Root Logins"
-		#"/etc/securetty":
-		#	content => "";
-	}
-
 	augeas {
 		"Restrict Virtual Console and Serial Port Root Logins":
 			context => "/files/etc/securetty",

@@ -37,19 +37,22 @@ class pam {
 			owner => root,
 			group => root,
 			mode  => 000;
+	}
 
 	augeas {
 		"Limit the Number of Concurrent Login Sessions Allowed Per User":
 			context => "/files/etc/security/limits.conf",
 			changes => [
-				"set domain *",
-				"set domain[.='*']/type hard",
-				"set domain[.='*']/item maxlogins",
-				"set domain[.='*']/value 10",
+				"rm domain[.='*'][./type='hard and ./item='maxlogins']",
+				"set domain[last() + 1] '*'",
+				"set domain[last()]/type 'hard'",
+				"set domain[last()]/item 'maxlogins'",
+				"set domain[last()]/value 10",
 			];
-		"Prevent Log In to Accounts With Empty Password":
-			context => "/files/etc/pam.d/system-auth",
-			changes => "rm *[argument=\'nullok\']";
+		# This feels like a bug in SSG
+		#"Prevent Log In to Accounts With Empty Password":
+		#	context => "/files/etc/pam.d/system-auth",
+		#	changes => "rm *[argument=\'nullok\']";
 		"Prevent Log In to Accounts With Empty Password":
 			context => "/files/etc/pam.d",
 			changes => [
@@ -129,11 +132,6 @@ class pam {
 			lens    => "login_defs.lns",
 			incl    => "/etc/login.defs",
 			changes => "set ENCRYPT_METHOD SHA512";
-		"Set Password Hashing Algorithm in /etc/libuser.conf":
-			context => "/files/etc/libuser.conf",
-			lens    => "shellvars.lns",
-			incl    => "/etc/libuser.conf",
-			changes => "set crypt_style sha512";
 
 	# sshd includes password-auth, not system-auth, one possible solution to enable pam_lastlog.so for SSH follows
 	#	"Add pam_lastlog.so to sshd":
@@ -146,5 +144,10 @@ class pam {
 	#			"set sshd/01/argument[1] showfailed",
 	#		],
 	#		onlyif  => "match sshd/*[type='session'][module='pam_lastlog.so'] size == 0";
+	}
+
+	exec {
+		"Set Password Hashing Algorithm in /etc/libuser.conf":
+			command => "/bin/sed -i 's/crypt_style[ \t]*=[ \t]*md5/crypt_style = sha512/g' /etc/libuser.conf";
 	}
 }

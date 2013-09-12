@@ -51,11 +51,6 @@ class yum {
 			group  => root,
 			mode   => 700,
 			source => "puppet:///modules/yum/yum.cron";
-		"/etc/cron.weekly/rpmverify":
-			owner  => root,
-			group  => root,
-			mode   => 700,
-			source => "puppet:///modules/yum/rpmverify";
 	}
 
 	augeas {

@@ -1,10 +1,13 @@
 class shared (	$server = false,
 		$dnsserver = false,
 		$ftpserver = false,
+		$webserver = false,
 		$gitserver = false,
 		$krbserver = false,
 		$ldapserver = false,
 		$mailserver = false,
+		$needs_gnome = true,
+		$needs_x11 = true,
 		$nfsbackupserver = false,
 		$nfsserver = false,
 		$puppetserver = false,
@@ -16,6 +19,7 @@ class shared (	$server = false,
 	$syslogserver_ip = "10.10.10.1"
 
 	$sudoers = "%admins  ALL=(ALL)       ALL"
+	#$nfs_server_fqdn = "fileserver.domain.com"
 
 	class { "accounts": }
 	class { "aide": }
@@ -23,10 +27,12 @@ class shared (	$server = false,
 	class { "banner": }
 	class { "cron": }
 	class { "fstab": }
+	class { "init": }
 	class { "iptables": }
 	class { "kernel": }
 	class { "named": }
 	class { "networking": }
+	#class { "nfs": nfs_server_fqdn => $nfs_server_fqdn; }
 	class { "ntp": }
 	class { "packages": }
 	class { "pam": }
@@ -47,6 +53,8 @@ node 'ldap.domain.com' {
 			server       => true,
 			krbserver    => true,
 			ldapserver   => true,
+			needs_x11    => false,
+			needs_gnome  => false,
 			syslogserver => true;
 	}
 }
@@ -56,6 +64,8 @@ node 'backup.domain.com' {
 	class {
 		"shared":
 			server          => true,
+			needs_x11       => false,
+			needs_gnome     => false,
 			nfsbackupserver => true;
 	}
 }
@@ -64,10 +74,13 @@ node 'backup.domain.com' {
 node 'fileserver.domain.com' {
 	class {
 		"shared":
-			server    => true,
-			ftpserver => true,
-			gitserver => true,
-			nfsserver => true,
+			server      => true,
+			ftpserver   => true,
+			gitserver   => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			nfsserver   => true,
+			webserver   => true;
 	}
 }
 
@@ -76,6 +89,8 @@ node 'puppet.domain.com' {
 	class {
 		"shared":
 			server       => true,
+			needs_x11    => false,
+			needs_gnome  => false,
 			puppetserver => true;
 	}
 }
@@ -84,8 +99,10 @@ node 'puppet.domain.com' {
 node 'mail.domain.com' {
 	class {
 		"shared":
-			server     => true,
-			mailserver => true;
+			server      => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			mailserver  => true;
 	}
 }
 
@@ -93,8 +110,10 @@ node 'mail.domain.com' {
 node 'named.domain.com' {
 	class {
 		"shared":
-			server    => true,
-			dnsserver => true;
+			server      => true,
+			needs_x11   => false,
+			needs_gnome => false,
+			dnsserver   => true;
 	}
 }
 
