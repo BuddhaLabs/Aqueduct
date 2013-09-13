@@ -68,7 +68,18 @@
 PDI=RHEL-06-000125
 #
 #BEGIN_CHECK
+
+
+. ./aqueduct_functions
+HAS_SCTP=`grep -r sctp /etc/modprobe.d | grep ':install' |  wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$HAS_SCTP" -eq 0  ]
+then
+        echo "install sctp /bin/true" > /etc/modprobe.d/sctp.conf
+fi
+
 #END_REMEDY
 
