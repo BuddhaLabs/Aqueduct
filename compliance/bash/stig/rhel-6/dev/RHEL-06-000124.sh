@@ -68,7 +68,17 @@
 PDI=RHEL-06-000124
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+HAS_DCCP=`grep -r dccp /etc/modprobe.d | grep ':install' |  wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$HAS_DCCP" -eq 0 ]
+then
+        echo "install dccp /bin/true" > /etc/modprobe.d/dccp.conf
+fi
+
 #END_REMEDY
 
