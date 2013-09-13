@@ -34,6 +34,12 @@
 # |__________|_______________________|____________________|____________|
 # |    1.0   |   Initial Script      | Vincent C. Passaro | 1-Aug-2012 |
 # |          |   Creation            |                    |            |
+# |    1.1   |No chown32 for 64 bit  | Leam Hall          |26-Jul-2013 |
+# |          |commented out          |                    |            |
+# |          |AUDITCOUNTCHOWN3264    |                    |            |
+# |          |and if block and extra |                    |            |
+# |          |fi between the 32 bit  |                    |            |
+# |          |blocks                 |                    |            |
 # |__________|_______________________|____________________|____________|
 #	                                                                  
    
@@ -109,20 +115,20 @@ UNAME=$( uname -m )
 BIT64='x86_64'
 AUDITFILE='/etc/audit/audit.rules'
 
-AUDITCOUNTCHOWN3264=$( grep -c -e "-a exit,always -F arch=b64 -S chown32" $AUDITFILE )
+#AUDITCOUNTCHOWN3264=$( grep -c -e "-a exit,always -F arch=b64 -S chown32" $AUDITFILE )
 AUDITCOUNTCHOWN3232=$( grep -c -e "-a exit,always -F arch=b32 -S chown32" $AUDITFILE )	
 AUDITCOUNTCHOWN64=$( grep -c -e "-a exit,always -F arch=b64 -S chown" $AUDITFILE )
 AUDITCOUNTCHOWN32=$( grep -c -e "-a exit,always -F arch=b32 -S chown" $AUDITFILE )
 # Start-Lockdown
 if [ $UNAME == $BIT64 ]
   then
-  	if [ $AUDITCOUNTCHOWN3264 -eq 0 ]
-	  then
-	    echo " " >> $AUDITFILE
-	    echo "#############GEN002820-4#############" >> $AUDITFILE
-	    echo "-a exit,always -F arch=b64 -S chown32" >> $AUDITFILE
-	    service auditd restart
-	fi
+#  	if [ $AUDITCOUNTCHOWN3264 -eq 0 ]
+#	  then
+#	    echo " " >> $AUDITFILE
+#	    echo "#############GEN002820-4#############" >> $AUDITFILE
+#	    echo "-a exit,always -F arch=b64 -S chown32" >> $AUDITFILE
+#	    service auditd restart
+#	fi
 	if [ $AUDITCOUNTCHOWN3232 -eq 0 ]
 	  then
 	    echo " " >> $AUDITFILE
@@ -154,7 +160,6 @@ else
 	    echo "-a exit,always -F arch=b32 -S chown32" >> $AUDITFILE
 	    service auditd restart
 	fi
-fi
 
 	if [ $AUDITCOUNTCHOWN32 -eq 0 ]
 	  then
@@ -163,4 +168,5 @@ fi
 	    echo "-a exit,always -F arch=b32 -S chown" >> $AUDITFILE
 	    service auditd restart
 	fi
-fi
+fi 
+

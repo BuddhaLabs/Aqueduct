@@ -34,6 +34,10 @@
 # |__________|_______________________|____________________|____________|
 # |    1.0   |   Initial Script      | Vincent C. Passaro | 1-Aug-2012 |
 # |          |   Creation            |                    |            |
+# |    1.1   |No lchown32 for 64 bit | Leam Hall          |26-Jul-2013 |
+# |          |commented out          |                    |            |
+# |          |AUDITCOUNT642          |                    |            |
+# |          |and if block           |                    |            |
 # |__________|_______________________|____________________|____________|
 #	                                                                  
    
@@ -109,19 +113,19 @@ UNAME=$( uname -m )
 BIT64='x86_64'
 AUDITFILE='/etc/audit/audit.rules'
 
-AUDITCOUNT642=$( grep -c -e "-a exit,always -F arch=b64 -S lchown32 " $AUDITFILE )
-AUDITCOUNT322=$( grep -c -e "-a exit,always -F arch=b32 -S lchown32 " $AUDITFILE )	
-AUDITCOUNTLCHOWN=$( grep -c -e "-a exit,always -S lchown " $AUDITFILE )	
+#AUDITCOUNT642=$( grep -c -e "-a exit,always -F arch=b64 -S lchown32" $AUDITFILE )
+AUDITCOUNT322=$( grep -c -e "-a exit,always -F arch=b32 -S lchown32" $AUDITFILE )	
+AUDITCOUNTLCHOWN=$( grep -c -e "-a exit,always -S lchown" $AUDITFILE )	
 # Start-Lockdown
 if [ $UNAME == $BIT64 ]
   then
-  	if [ $AUDITCOUNT642 -eq 0 ]
-	  then
-	    echo " " >> $AUDITFILE
-	    echo "#############GEN002820-7#############" >> $AUDITFILE
-	    echo "-a exit,always -F arch=b64 -S lchown32 " >> $AUDITFILE
-	    service auditd restart
-	fi
+#  	if [ $AUDITCOUNT642 -eq 0 ]
+#	  then
+#	    echo " " >> $AUDITFILE
+#	    echo "#############GEN002820-7#############" >> $AUDITFILE
+#	    echo "-a exit,always -F arch=b64 -S lchown32 " >> $AUDITFILE
+#	    service auditd restart
+#	fi
 	if [ $AUDITCOUNT322 -eq 0 ]
 	  then
 	    echo " " >> $AUDITFILE
