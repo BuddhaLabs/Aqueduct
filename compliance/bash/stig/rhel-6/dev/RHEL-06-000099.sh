@@ -68,7 +68,18 @@
 PDI=RHEL-06-000099
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+NI6CDAR=`sysctl net.ipv6.conf.default.accept_redirects | awk '{ print $NF}'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $NI6CDAR -gt 0 ]
+then
+        edit_file  "/etc/sysctl.conf" $PDI "net.ipv6.conf.default.accept_redirects = 0" "net.ipv6.conf.default.accept_redirects"
+        sysctl -w net.ipv6.conf.default.accept_redirects=0
+fi
+
 #END_REMEDY
 
