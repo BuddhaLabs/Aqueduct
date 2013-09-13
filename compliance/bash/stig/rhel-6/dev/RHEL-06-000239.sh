@@ -64,8 +64,18 @@
 # Global Variables
 PDI=RHEL-06-000239
 #
-#BEGIN_CHECK
+
+. ./aqueduct_functions
+grep ^PermitEmptyPasswords /etc/ssh/sshd_config | grep no
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -ne 0 ]
+then
+        edit_file /etc/ssh/sshd_config $PDI "PermitEmptyPasswords no" PermitEmptyPasswords
+        service sshd restart
+fi
+
 #END_REMEDY
 
