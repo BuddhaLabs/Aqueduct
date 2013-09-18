@@ -63,6 +63,18 @@
 PDI=RHEL-06-000204
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+is_rpm_installed xinetd
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ $? -eq 0 ]
+then
+    remove_rpm xinetd
+fi
+
 #END_CHECK
 #BEGIN_REMEDY
 #END_REMEDY
