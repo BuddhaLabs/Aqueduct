@@ -66,7 +66,13 @@
 PDI=RHEL-06-000243
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+
 #END_CHECK
 #BEGIN_REMEDY
+
+edit_file /etc/ssh/sshd_config $PDI "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" "Ciphers"
+
 #END_REMEDY
 
