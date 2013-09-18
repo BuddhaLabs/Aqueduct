@@ -73,7 +73,21 @@
 PDI=RHEL-06-000311
 #
 #BEGIN_CHECK
+
+
+. ./aqueduct_functions
+
+SPACE_LEFT=0
+line_count 'space_left' /etc/audit/auditd.conf
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -ge 1 ]
+then
+    # This intentionally has a space in the search string to not get space_left_action
+    SPACE_LEFT=`grep '^space_left ' /etc/audit/auditd.conf  | awk '{ print $NF}'`
+fi
+
 #END_REMEDY
 
