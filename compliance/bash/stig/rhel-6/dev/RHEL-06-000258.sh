@@ -69,7 +69,25 @@
 PDI=RHEL-06-000258
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+
+what_runlevel
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -ne 3 ]
+then
+    if [ -x /usr/bin/gconftool-2 ]
+    then
+        IDLE_ACTIVATION_ENABLED=`gconftool-2 -g /apps/gnome-screensaver/idle_activation_enabled`
+        if [ "$IDLE_ACTIVATION_ENABLED" != "true" ]
+        then
+            gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool --set /apps/gnome-screensaver/idle_activation_enabled true
+        fi
+    fi
+fi
+
 #END_REMEDY
 
