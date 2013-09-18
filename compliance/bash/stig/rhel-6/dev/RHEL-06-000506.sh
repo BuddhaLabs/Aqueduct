@@ -70,7 +70,24 @@
 PDI=RHEL-06-000506
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+updatedb
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ -f /etc/hushlogin ]
+then
+    rm /etc/hushlogin
+fi
+
+for i in `locate .hushlogin`
+do
+    rm $i
+done
+
+updatedb
+
 #END_REMEDY
 
