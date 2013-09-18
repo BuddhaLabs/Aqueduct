@@ -81,7 +81,18 @@
 PDI=RHEL-06-000203
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+
+is_chkconfig_on xinetd
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ $? -eq 0 ]
+then
+    set_chkconfig_off xinetd
+fi
+
 #END_REMEDY
 
