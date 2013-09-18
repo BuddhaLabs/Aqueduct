@@ -70,7 +70,25 @@
 PDI=RHEL-06-000247
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+is_chkconfig_on ntpd
+
 #END_CHECK
 #BEGIN_REMEDY
+
+is_chkconfig_on ntpd
+
+if [ $? -ne 0 ]
+then
+    set_chkconfig_on ntpd
+fi
+
+is_status_running ntpd
+if [ $? -ne 0 ]
+then
+    set_status_running ntpd
+fi
+
 #END_REMEDY
 
