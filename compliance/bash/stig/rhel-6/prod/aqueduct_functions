@@ -1,5 +1,5 @@
 ###
-### This file contains functions written by and in 
+### This file contains functions written by and in
 ### support of the Aqueduct project. Aqueduct provides
 ### server hardening automation.
 ###
@@ -14,7 +14,7 @@ edit_file () {
 
     # This assumes you have already tested the file and
     # it does not contain the "SHOULD_BE" string.
-    
+
     # Example:
 
     # edit_file ./errno.test 366 "int main(VOID)" "int"
@@ -30,16 +30,19 @@ edit_file () {
         exit 1;
     fi
 
-    BASENAME=`basename $FILE`;
-    DIRNAME=`dirname $FILE`;
-    DATE=`date +%Y-%j`;
-    OWNER=`stat -c "%U" $FILE`;
-    GROUP=`stat -c "%G" $FILE`;
-    PERMS=`stat -c "%a" $FILE`;
+        # BASENAME=`basename $FILE`;
+        # DIRNAME=`dirname $FILE`;
+    # DATE=`date +%Y-%j`;
+    # OWNER=`stat -c "%U" $FILE`;
+    # GROUP=`stat -c "%G" $FILE`;
+    # PERMS=`stat -c "%a" $FILE`;
 
-    cp $FILE ${DIRNAME}/${BASENAME}.${DATE}.${PDI}
+    # cp $FILE ${DIRNAME}/${BASENAME}.${DATE}.${PDI}
+        backup_file $FILE $PDI
 
-    BASE_COUNT=`grep -c ^$BASE_STRING $FILE`;
+        copy_perms $FILE ${FILE}.${DATE}.${PDI}
+
+    BASE_COUNT=`line_count $BASE_STRING $FILE`;
 
     if [ $BASE_COUNT -ne 0 ]
     then
@@ -50,24 +53,148 @@ edit_file () {
         echo "$SHOULD_BE" >> $FILE
     fi
 
-    NEW_OWNER=`stat -c "%U" $FILE`;
-    NEW_GROUP=`stat -c "%G" $FILE`;
-    NEW_PERMS=`stat -c "%a" $FILE`;
+        copy_perms ${FILE}.${DATE}.${PDI} $FILE
 
-    if [ $NEW_OWNER != $OWNER ]
-    then
-        chown $OWNER $FILE;
-    fi
+    # NEW_OWNER=`stat -c "%U" $FILE`;
+    # NEW_GROUP=`stat -c "%G" $FILE`;
+    # NEW_PERMS=`stat -c "%a" $FILE`;
 
-    if [ $NEW_GROUP != $GROUP ]
-    then
-        chgrp $GROUP $FILE;
-    fi
+    # if [ $NEW_OWNER != $OWNER ]
+    # then
+    #     chown $OWNER $FILE;
+    # fi
 
-    if [ $NEW_PERMS != $PERMS ]
-    then
-        chmod $PERMS $FILE;
-    fi
+    # if [ $NEW_GROUP != $GROUP ]
+    # then
+    #     chgrp $GROUP $FILE;
+    # fi
+
+    # if [ $NEW_PERMS != $PERMS ]
+    # then
+    #     chmod $PERMS $FILE;
+    # fi
 
 }
+
+function copy_perms() {
+        # Set the owner, group, and permissions on $2 to be the same as $1
+
+        $MODEL_FILE = $1
+        $FIX_FILE = $2
+
+    MODEL_OWNER=`stat -c "%U" $MODEL_FILE`;
+    MODEL_GROUP=`stat -c "%G" $MODEL_FILE`;
+    MODEL_PERMS=`stat -c "%a" $MODEL_FILE`;
+
+    FIX_OWNER=`stat -c "%U" $FIX_FILE`;
+    FIX_GROUP=`stat -c "%G" $FIX_FILE`;
+    FIX_PERMS=`stat -c "%a" $FIX_FILE`;
+
+    if [ $MODEL_OWNER != $FIX_OWNER ]
+    then
+        chown $MODEL_OWNER $FIX_FILE;
+    fi
+
+    if [ $MODEL_GROUP != $FIX_GROUP ]
+    then
+        chgrp $MODEL_GROUP $FIX_FILE;
+    fi
+
+    if [ $MODEL_PERMS != $FIX_PERMS ]
+    then
+        chmod $MODEL_PERMS $FIX_FILE;
+    fi
+}
+
+
+function backup_file() {
+        # Make a backup of the file.
+        # Requires the file as $1, the PDI as $2,
+
+        if [ $2 -ge 0 ]
+        then
+        DATE=`date +%Y-%j`;
+        cp $FILE ${FILE}.${DATE}.${PDI}
+        else
+                echo "Usage: backup_file <file> <PDI>"
+                return 1
+        fi
+}
+
+
+function is_rpm_installed() {
+        # Return 0 if the RPM is installed, otherwise 1
+
+        rpm -q $1 > /dev/null
+        return $?
+}
+
+function install_rpm() {
+        # Install the rpm
+
+        yum -y install $1
+}
+
+function remove_rpm() {
+        # Hmm.. maybe remove an rpm?
+
+        yum -y erase $1
+}
+
+function is_chkconfig_on() {
+        # Return 0 if the service is on in run level 3
+        # $1 is the service, $2, if present, is the run level
+
+        RL=3
+        if [ $2 -gt 1 ]
+        then
+                RL=$2
+        fi
+
+        chkconfig --list $1 | grep "${RL}:on"
+        return $?
+}
+
+function set_chkconfig_on() {
+        # Return 0 if the service can be turned on.
+
+        chkconfig $1 on
+        return $?
+}
+
+
+function is_status_running() {
+        # Return 0 if the service is currently running
+
+        service $1 status
+        return $?
+}
+
+function set_status_running() {
+        # Return 0 if the service was just turned on.
+
+        service $1 start
+        return $?
+}
+
+function can_yum() {
+        # Check to see if you can connect to a yum service
+        # Looks for part of the string "This system is receiving updates from RHN Classic or RHN Satellite."
+
+        HAVE_STRING=`yum check-update | grep -c "system is receiving"`
+        if [ $HAVE_STRING -gt 0 ]
+        then
+                return 0
+        else
+                return 1
+        fi
+}
+
+function line_count() {
+        # Return the expected count of lines.
+
+        RETURN=`grep -c ^$1 $2`
+        return $RETURN
+}
+
 
