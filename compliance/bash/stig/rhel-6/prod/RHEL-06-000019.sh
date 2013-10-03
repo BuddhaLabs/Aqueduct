@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -62,14 +63,16 @@
 #	
 # Global Variables
 PDI=RHEL-06-000019
-unalias rm
 #
 #BEGIN_CHECK
 #END_CHECK
 #BEGIN_REMEDY
-rm /etc/hosts.equiv
+if [ -f  /etc/hosts.equiv ]
+then
+    rm /etc/hosts.equiv
+fi
 
-for in in `cat /etc/passwd | awk -F":" '{ print $6 }' `
+for i in `cat /etc/passwd | awk -F":" '{ print $6 }' `
 do
     if [ -f ${i}/.rhosts ]
     then

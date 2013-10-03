@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -61,13 +62,17 @@ PDI=RHEL-06-000039
 #
 #BEGIN_CHECK
 if [ -a "/etc/passwd" ]
-    then
-        CUROWN=`stat -c %U /etc/passwd`;
-    if [ "$CUROWN" != "root" ]
-        then
+then
+    CUROWN=`stat -c %U /etc/passwd`;
+fi
+
 #END_CHECK
 #BEGIN_REMEDY
-            chown root /etc/passwd
+
+if [ "$CUROWN" != "root" ]
+then
+    chown root /etc/passwd
 fi
+
 #END_REMEDY
 

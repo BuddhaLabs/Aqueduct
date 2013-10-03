@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -60,14 +61,17 @@ PDI=RHEL-06-000037
 #
 #BEGIN_CHECK
 if [ -a "/etc/gshadow" ]
-    then
+then
         CURGOWN=`stat -c %G /etc/gshadow`;
+fi
 
-if [ "$CURGOWN" != "root" ]
-    then
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$CURGOWN" != "root" ]
+then
         chgrp root /etc/gshadow
 fi
+
 #END_REMEDY
 

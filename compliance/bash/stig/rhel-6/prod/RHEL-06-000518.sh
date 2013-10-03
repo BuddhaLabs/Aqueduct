@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -82,18 +83,25 @@ PDI=RHEL-06-000518
 #
 #Need to follow-up on this! (VCP June 8 2013)
 #
+#   Note that this generates over 13,000 lines of error code the first
+#   time it is run. The filesystem rpm claims to have directories for
+#   lots of man pages but does not actually create them.
+#
 #
 #BEGIN_CHECK
-BADRPMFILES=$(rpm -Va  | grep '^.M' | awk '{print $2}')
+BADRPMFILES=$(rpm -Va  | grep '^.M' | awk '{print $NF}')
 BADNUMBER=$(echo $BADRPMFILES | wc -l)
+
 #END_CHECK
-if [ $BADNUMBER -ne 0 ]
-	then
-		for line in $BADRPMFILES
-			do 
-				rpm --setperms `rpm -qf $line`
-		done
-fi
 #BEGIN_REMEDY
+
+if [ $BADNUMBER -ne 0 ]
+then
+	for line in $BADRPMFILES
+	do 
+		rpm --setperms `rpm -qf $line`
+	done
+fi
+
 #END_REMEDY
 
