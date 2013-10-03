@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -79,12 +80,12 @@ updatedb
 
 if [ -f /etc/hushlogin ]
 then
-    rm /etc/hushlogin
+	rm /etc/hushlogin
 fi
 
 for i in `locate .hushlogin`
 do
-    rm $i
+	rm $i
 done
 
 updatedb

@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -38,7 +39,7 @@
 # IAControls: 
 #
 # Check Content:
-#
+#S_TIPC=`grep -r tipc /etc/modprobe.d | grep ':install' |  wc -l`
 # If the system is configured to prevent the loading of the "tipc" kernel 
 # module, it will contain lines inside any file in "/etc/modprobe.d" or the 
 # deprecated"/etc/modprobe.conf". These lines instruct the module loading 
@@ -69,15 +70,14 @@ PDI=RHEL-06-000127
 #BEGIN_CHECK
 
 . ./aqueduct_functions
-HAS_SCTP=`grep -r sctp /etc/modprobe.d | grep ':install' |  wc -l`
-
+HAS_TIPC=`grep -r tipc /etc/modprobe.d | grep ':install' |  wc -l`
 
 #END_CHECK
 #BEGIN_REMEDY
 
-if [ "$HAS_SCTP" -lt 1 ]
+if [ "$HAS_TIPC" -lt 1 ]
 then
-    echo "install sctp /bin/true" > /etc/modprobe.d/sctp.conf
+    echo "install tipc /bin/true" > /etc/modprobe.d/tipc.conf
 fi
 
 #END_REMEDY

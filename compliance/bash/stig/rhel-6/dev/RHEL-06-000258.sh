@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -79,14 +80,17 @@ what_runlevel
 
 if [ $? -ne 3 ]
 then
-    if [ -x /usr/bin/gconftool-2 ]
-    then
-        IDLE_ACTIVATION_ENABLED=`gconftool-2 -g /apps/gnome-screensaver/idle_activation_enabled`
-        if [ "$IDLE_ACTIVATION_ENABLED" != "true" ]
-        then
-            gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool --set /apps/gnome-screensaver/idle_activation_enabled true
-        fi
-    fi
+	if [ -x /usr/bin/gconftool-2 ]
+	then
+		IDLE_ACTIVATION_ENABLED=`gconftool-2 -g /apps/gnome-screensaver/idle_activation_enabled`
+		if [ "$IDLE_ACTIVATION_ENABLED" != "true" ]
+		then
+			gconftool-2 --direct \
+				--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory \
+				--type bool \
+				--set /apps/gnome-screensaver/idle_activation_enabled true
+		fi
+	fi
 fi
 
 #END_REMEDY

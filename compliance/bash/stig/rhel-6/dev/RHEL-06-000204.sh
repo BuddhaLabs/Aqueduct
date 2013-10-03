@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -69,13 +70,10 @@ is_rpm_installed xinetd
 
 #END_CHECK
 #BEGIN_REMEDY
-
 if [ $? -eq 0 ]
 then
-    remove_rpm xinetd
+	remove_rpm xinetd
 fi
 
-#END_CHECK
-#BEGIN_REMEDY
 #END_REMEDY
 

@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -72,7 +73,7 @@ PDI=RHEL-06-000243
 #END_CHECK
 #BEGIN_REMEDY
 
-edit_file /etc/ssh/sshd_config $PDI "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" "Ciphers"
+edit_file /etc/ssh/sshd_config $PDI "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" "Ciphers" 
 
 #END_REMEDY
 

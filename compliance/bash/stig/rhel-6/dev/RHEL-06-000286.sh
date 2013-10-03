@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -74,7 +75,27 @@
 PDI=RHEL-06-000286
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+DOES_SHUTDOWN=`grep -l '^exec /sbin/shutdown' /etc/init/* | grep -v $PDI | wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+DATE=`date +%Y-%j`
+
+if [ $DOES_SHUTDOWN -ne 0 ]
+then
+	for i in `grep -l '^exec /sbin/shutdown' /etc/init/* | grep -v $PDI`
+	do
+		cp $i ${i}.${DATE}.${PDI}
+		copy_perms $i ${i}.${DATE}.${PDI}
+		grep -v '^exec /sbin/shutdown' ${i}.${DATE}.${PDI} >  $i
+		echo "# Fixed: $PDI" >> $i
+		echo 'exec /usr/bin/logger -p security.info "Ctrl-Alt-Delete pressed"' >> $i
+		copy_perms  ${i}.${DATE}.${PDI} $i
+	done
+fi
+	
 #END_REMEDY
 

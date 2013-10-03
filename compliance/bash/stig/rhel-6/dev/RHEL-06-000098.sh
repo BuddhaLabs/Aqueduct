@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -74,7 +75,20 @@
 PDI=RHEL-06-000098
 #
 #BEGIN_CHECK
+. ./aqueduct_functions
+HAS_IPV6=`grep -r ipv6 /etc/modprobe.d | grep ':options' |  wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+
+#END_CHECK
+#BEGIN_REMEDY
+
+if [ "$HAS_IPV6" -lt 1 ]
+then
+        echo "options ipv6 disable=1" > /etc/modprobe.d/ipv6.conf
+fi
+
 #END_REMEDY
 

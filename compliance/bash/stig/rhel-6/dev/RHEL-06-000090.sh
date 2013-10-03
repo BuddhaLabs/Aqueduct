@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -71,7 +72,6 @@ PDI=RHEL-06-000090
 #
 #BEGIN_CHECK
 
-. ./aqueduct_functions
 I4CDSR=` sysctl net.ipv4.conf.default.secure_redirects | awk '{ print $NF}'`
 
 #END_CHECK
@@ -82,9 +82,15 @@ then
     grep "^net.ipv4.conf.default.secure_redirects = 0" /etc/sysctl.conf
     if [ $? != 0 ]
     then
+        if [ -f ./aqueduct_functions ]
+        then
+            . ./aqueduct_functions
+        fi
+
         edit_file "/etc/sysctl.conf" $PDI \
             "net.ipv4.conf.default.secure_redirects = 0" \
             "net.ipv4.conf.default.secure_redirects"
+
     fi
 
     sysctl -w net.ipv4.conf.default.secure_redirects=0 > /dev/null

@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -74,7 +75,23 @@
 PDI=RHEL-06-000135
 #
 #BEGIN_CHECK
+
+LOGFILES=`grep '/' /etc/rsyslog.conf | grep -v ^# | awk '{ print $NF}' | sed 's/-//g'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+for FILE in $LOGFILES
+do
+    if [ -f $FILE ]
+    then
+        PERMS=`stat -c %a $FILE`
+        if [ "$PERMS" != "600" ]
+        then
+            chmod 0600 $FILE
+        fi
+	fi
+done
+
 #END_REMEDY
 

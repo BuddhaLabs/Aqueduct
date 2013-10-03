@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -77,7 +78,31 @@
 PDI=RHEL-06-000334
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+HAS_INACTIVE=`line_count INACTIVE /etc/default/useradd`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+
+NUM_DAYS=35
+
+if [ $HAS_INACTIVE -gt 0 ]
+then
+	INACTIVE_VALUE=`grep ^INACTIVE /etc/default/useradd | awk -F"=" '{ print $NF}'`
+	INACTIVE_VALUE=`expr 0 + $INACTIVE_VALUE`
+	if [ $INACTIVE_VALUE -lt $NUM_DAYS ]
+	then
+	edit_file /etc/default/useradd $PDI 'INACTIVE=35' 'INACTIVE'
+	fi
+else
+	DATE=`date +%Y-%j`
+	backup_file /etc/default/useradd $PDI
+	copy_perms /etc/default/useradd /etc/default/useradd.${DATE}.${PDI}
+	echo "INACTIVE=$NUM_DAYS" >> /etc/default/useradd
+	copy_perms  /etc/default/useradd.${DATE}.${PDI}  /etc/default/useradd
+fi
+
 #END_REMEDY
 

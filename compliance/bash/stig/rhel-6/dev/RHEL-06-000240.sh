@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -67,16 +68,15 @@ PDI=RHEL-06-000240
 #
 #BEGIN_CHECK
 
-
-HAS_BANNER=`grep -c ^Banner /etc/ssh/sshd_config`
 . ./aqueduct_functions
+HAS_BANNER=`grep -c ^Banner /etc/ssh/sshd_config`
 
 #END_CHECK
 #BEGIN_REMEDY
 
 if [  $HAS_BANNER -eq 0 ]
 then
-    edit_file /etc/ssh/sshd_config $PDI "Banner /etc/issue" "Banner"
+	edit_file /etc/ssh/sshd_config $PDI "Banner /etc/issue" "Banner"
 fi
 
 #END_REMEDY

@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -71,7 +72,22 @@
 PDI=RHEL-06-000097
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+
+I4CDRP=`sysctl net.ipv4.conf.default.rp_filter  | awk '{ print $NF }'`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+
+if [ $I4CDRP -ne 1 ]
+then
+	edit_file /etc/sysctl.conf $PDI "net.ipv4.conf.default.rp_filter = 1" "net.ipv4.conf.default.rp_filter"
+fi
+
+sysctl -p > /dev/null
+
+
 #END_REMEDY
 

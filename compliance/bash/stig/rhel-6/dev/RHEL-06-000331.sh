@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -82,7 +83,24 @@
 PDI=RHEL-06-000331
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+
+IS_RUNNING=`is_status_running bluetooth`
+IS_ON=`is_chkconfig_on bluetooth`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ if $IS_RUNNING ]
+then
+	set_status_off bluetooth 
+fi
+
+if [ if $IS_ON ]
+then
+	set_chkconfig_off bluetooth
+fi
+	
 #END_REMEDY
 

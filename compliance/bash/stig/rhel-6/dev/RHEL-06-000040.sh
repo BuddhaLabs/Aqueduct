@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -60,10 +61,18 @@
 PDI=RHEL-06-000040
 #
 #BEGIN_CHECK
+if [ -a "/etc/passwd" ]
+then
+    CURGOWN=`stat -c %G /etc/passwd`;
+fi
+
+if [ "$CURGOWN" != "root" ]
+then
+
 #END_CHECK
 #BEGIN_REMEDY
-
-chgrp root /etc/passwd
+    chgrp root /etc/passwd
+fi
 
 #END_REMEDY
 

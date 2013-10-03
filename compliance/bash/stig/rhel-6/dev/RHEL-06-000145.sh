@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -68,7 +69,25 @@
 PDI=RHEL-06-000145
 #
 #BEGIN_CHECK
+
+service auditd status
+
 #END_CHECK
 #BEGIN_REMEDY
+if [ $? -ne 0 ]
+then
+	service auditd start
+	if [ $? -ne 0 ]
+	then
+		echo "Cannot start auditd."
+	fi
+fi
+
+chkconfig auditd on
+if [ $? -ne 0 ]
+then
+	echo "Cannot make auditd on via chkconfig."
+fi
+
 #END_REMEDY
 

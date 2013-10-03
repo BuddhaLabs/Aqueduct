@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -77,7 +78,18 @@
 PDI=RHEL-06-000315
 #
 #BEGIN_CHECK
+
+. ./aqueduct_functions
+HAS_NET_PF_31=`grep -r  net-pf-31 /etc/modprobe.conf /etc/modprobe.d  | grep ':install' |  wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$HAS_NET_PF_31" -lt 1 ]
+then
+	echo "install net-pf-31 /bin/true" >> /etc/modprobe.d/bluetooth.conf
+	echo "install bluetooth /bin/true" >> /etc/modprobe.d/bluetooth.conf
+fi
+
 #END_REMEDY
 

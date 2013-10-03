@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -75,30 +76,26 @@ PDI=RHEL-06-000202
 #
 #BEGIN_CHECK
 
-HAS_MODULE=`grep init_module /etc/audit/audit.rules | wc -l`
+HAS_INIT_MODULE=`grep init_module /etc/audit/audit.rules | wc -l`
 
 #END_CHECK
 #BEGIN_REMEDY
 
 if [ $HAS_INIT_MODULE -lt 1 ]
 then
-    FILE='/etc/audit/audit.rules'
-    DATE=`date +%Y-%j`
-    cp $FILE ${FILE}.${DATE}.${PDI}
+	FILE='/etc/audit/audit.rules'
+	DATE=`date +%Y-%j`
+	cp $FILE ${FILE}.${DATE}.${PDI}
     OWNER=`stat -c "%U" $FILE`
     GROUP=`stat -c "%G" $FILE`
     PERMS=`stat -c "%a" $FILE`
-    echo "-w /sbin/insmod -p x -k modules" >> $FILE
-    echo "-w /sbin/rmmod -p x -k modules" >> $FILE
-    echo "-w /sbin/modprobe -p x -k modules" >> $FILE
-    echo "-a always,exit -F arch=b32 -S init_module -S delete_module -k modules"  >> $FILE
-    IS_64_BIT=`uname -a | grep -c x86_64`
-    if [ $IS_64_BIT -eq 1]
-    then
-        echo "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"  >> $FILE
-    fi
-    chown ${OWNER}:${GROUP} $FILE
-    chmod $PERMS $FILE
+	echo "-w /sbin/insmod -p x -k modules" >> $FILE
+	echo "-w /sbin/rmmod -p x -k modules" >> $FILE
+	echo "-w /sbin/modprobe -p x -k modules" >> $FILE
+	echo "-a always,exit -F arch=b32 -S init_module -S delete_module -k modules"  >> $FILE
+	echo "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"  >> $FILE
+	chown ${OWNER}:${GROUP} $FILE
+	chmod $PERMS $FILE
 fi
 
 

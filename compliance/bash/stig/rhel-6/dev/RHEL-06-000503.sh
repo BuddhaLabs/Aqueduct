@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -72,7 +73,16 @@
 PDI=RHEL-06-000503
 #
 #BEGIN_CHECK
+
+HAS_USB=`grep -r usb-storage /etc/modprobe.d | grep ':install' |  wc -l`
+
 #END_CHECK
 #BEGIN_REMEDY
+
+if [ "$HAS_USB" -lt 1 ]
+then
+    echo "install usb-storage /bin/true" > /etc/modprobe.d/usb.conf
+fi
+
 #END_REMEDY
 

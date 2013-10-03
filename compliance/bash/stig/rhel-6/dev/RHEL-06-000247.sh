@@ -17,6 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
+#    1.1     |  Script add test and fix |  Leam Hall         | 3-OCT-2013
 #	                                                                  
    
 #	
@@ -72,23 +73,24 @@ PDI=RHEL-06-000247
 #BEGIN_CHECK
 
 . ./aqueduct_functions
-is_chkconfig_on ntpd
 
 #END_CHECK
 #BEGIN_REMEDY
+
 
 is_chkconfig_on ntpd
 
 if [ $? -ne 0 ]
 then
-    set_chkconfig_on ntpd
+	set_chkconfig_on ntpd
 fi
 
 is_status_running ntpd
 if [ $? -ne 0 ]
 then
-    set_status_running ntpd
+	set_status_running ntpd
 fi
+
 
 #END_REMEDY
 
