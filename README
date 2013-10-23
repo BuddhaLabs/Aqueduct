@@ -1,5 +1,5 @@
 #Aqueduct - Compliance Remediation Content
-#Copyright (C) 2011,2012  Vincent C. Passaro (vincent.passaro@gmail.com)
+#Copyright (C) 2013  Vincent C. Passaro (vince@buddhalabs.com)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ Commit access: svn co svn+ssh://svn.fedorahosted.org/svn/aqueduct
 2. Directory Structure
 
 ├── compliance <--- Content and configuration used on systems
-│   ├── Bash <--- Bash confgiuration Scripts
+│   ├── Bash <--- Bash configuration Scripts
 │   │   ├── CIS  <---- Configuration Content for various regulatory frameworks
 │   │   │   └── rhel5 <--- RHEL Version
 │   │   │       └── prod
@@ -71,7 +71,7 @@ Commit access: svn co svn+ssh://svn.fedorahosted.org/svn/aqueduct
 │   │           ├── manual-checks
 │   │           ├── prod
 │   │           └── test
-│   └── Puppet  <--- Puppet confgiuration Scripts
+│   └── Puppet  <--- Puppet configuration Scripts
 │       ├── HIPAA
 │       ├── PCI
 │       └── STIG
