@@ -67,7 +67,7 @@ grep ENCRYPT_METHOD /etc/login.defs | grep SHA512 > /dev/null
 if [ $? -eq 1 ]
 then
     echo "ENCRYPT_METHOD   SHA512" >> /etc/login.defs
-    chomd 644 /etc/login.defs
+    chmod 644 /etc/login.defs
     chown root:root /etc/login.defs
 fi
 
