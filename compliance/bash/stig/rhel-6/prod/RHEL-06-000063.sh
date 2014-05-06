@@ -17,8 +17,7 @@
 #    Version |   Change Information     |      Author        |    Date    
 #-------------------------------------------------------------------------
 #    1.0     |  Initial Script Creation |  Vincent Passaro   | 1-JUNE-2013
-#	                                                                  
-   
+#	 1.1     |  Fix typo chomd          |  Leam Hall         | 6-MAY-2014                                                               
 #	
 #######################DISA INFORMATION##################################
 # Group ID (Vulid): RHEL-06-000063
