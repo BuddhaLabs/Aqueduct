@@ -4,6 +4,28 @@
 ### server hardening automation.
 ###
 
+# Program flow thoughts
+
+# Output
+#   server:date:PDI:{Pass/Fail/Fixed}
+#   guido:2014-07-09:GEN000520:Fixed
+
+# output
+
+# If the TEST option True will ONLY test and report "Pass/Fail".
+# It will not change anythihng.
+
+# By default a backup file will be made.
+# If there is a file already, leave it in place and do not make another copy.
+
+# backup_file 'aqueduct_functions' 007
+
+# By default the script will fix.
+
+# By default the script will not change a file that is already correct.
+
+
+
 
 
 function edit_file () {
