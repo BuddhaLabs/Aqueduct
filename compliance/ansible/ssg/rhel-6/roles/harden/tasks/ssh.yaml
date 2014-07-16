@@ -1,0 +1,66 @@
+# This file is part of Harden Role
+# Copyright (C) 2014 Bill Carlson
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+#various ssh fixes
+- name: "CCE-27112-2: sshd_enable_warning_banner"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='Banner /etc/issue'
+    regexp='^Banner /etc/issue'
+    insertafter='^#Banner'
+  notify: restart ssh
+
+- name: "CCE-26887-0: sshd_disable_empty_passwords"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='PermitEmptyPasswords no'
+    regexp='^PermitEmptyPasswords'
+    insertafter='^#PermitEmptyPasswords'
+  notify: restart ssh
+
+- name: "CCE-26282-4: sshd_set_keepalive"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='ClientAliveCountMax 0'
+    regexp='^ClientAliveCountMax'
+    insertafter='^#ClientAliveCountMax'
+  notify: restart ssh
+
+- name: "CCE-26919-1: sshd_set_idle_timeout"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='ClientAliveInterval {{ssh_ClientAliveInterval}}'
+    regexp='^ClientAliveInterval'
+    insertafter='^#ClientAliveInterval'
+  notify: restart ssh
+
+- name: "CCE-26555-3: sshd_use_approved_ciphers"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc'
+    regexp='^Ciphers'
+    state=present
+  notify: restart ssh
+ 
+- name: "CCE-27201-3: sshd_do_not_permit_user_env"
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    line='PermitUserEnvironment no'
+    regexp='PermitUserEnvironment'
+    insertafter='^#PermitUserEnvironment'
+    state=present
+  notify: restart ssh

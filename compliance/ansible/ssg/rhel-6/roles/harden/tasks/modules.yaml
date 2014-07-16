@@ -1,0 +1,64 @@
+# This file is part of Harden Role
+# Copyright (C) 2014 Bill Carlson
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+- name: "CCE-27016-5: kernel_module_usb-storage_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/usb-storage.conf
+    state=present
+    create=yes
+    line='install usb-storage /bin/false'
+
+- name: "CCE-26763-3: kernel_module_bluetooth_disabled"
+  template:
+    dest=/etc/modprobe.d/bluetooth.conf
+    src=disable_bluetooth.conf
+
+- name: "CCE-27153-6: kernel_module_ipv6_option_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/disabled.conf
+    state=present
+    create=yes
+    line='options ipv6 disable=1'
+
+- name: "CCE-26448-1: kernel_module_dccp_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/dccp.conf
+    state=present
+    create=yes
+    line='install dccp /bin/false'
+
+- name: "CCE-26410-1: kernel_module_sctp_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/sctp.conf
+    state=present
+    create=yes
+    line='install sctp /bin/false'
+
+- name: "CCE-26239-4: kernel_module_rds_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/rds.conf
+    state=present
+    create=yes
+    line='install rds /bin/false'
+
+- name: "CCE-26696-5: kernel_module_tipc_disabled"
+  lineinfile:
+    dest=/etc/modprobe.d/tipc.conf
+    state=present
+    create=yes
+    line='install tipc /bin/false'
+

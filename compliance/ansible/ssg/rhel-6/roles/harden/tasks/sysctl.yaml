@@ -1,0 +1,140 @@
+# This file is part of Harden Role
+# Copyright (C) 2014 Bill Carlson
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+- name: "workaround: remove likely missing items from sysctl.conf"
+  replace:
+    dest=/etc/sysctl.conf
+    replace="#\\1"
+    regexp="^({{item}})"
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables.*
+    - net.bridge.bridge-nf-call-iptables.*
+    - net.bridge.bridge-nf-call-arptables.*
+  notify: reload sysctl
+  when: ansible_os_family == 'RedHat'
+ 
+- name: "CCE-27007-4: enable_execshield"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='kernel.exec-shield = 1'
+    regexp='^kernel.exec-shield'
+    state=present
+  notify: reload sysctl
+  
+- name: "CCE-26999-3: sysctl_kernel_randomize_va_space"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='kernel.randomize_va_space = 2'
+    regexp='^kernel.randomize_va_space'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27001-7: sysctl_net_ipv4_conf_default_send_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.default.send_redirects = 0'
+    regexp='net.ipv4.conf.default.send_redirects'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27004-1: sysctl_ipv4_all_send_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.send_redirects = 0'
+    regexp='net.ipv4.conf.all.send_redirects = 0'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27037-1: sysctl_net_ipv4_conf_all_accept_source_route"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.accept_source_route = 0'
+    regexp='net.ipv4.conf.all.accept_source_route'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27027-2: sysctl_net_ipv4_conf_all_accept_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.accept_redirects = 0'
+    regexp='net.ipv4.conf.all.accept_redirects'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-26854-0: sysctl_net_ipv4_conf_all_secure_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.secure_redirects = 0'
+    regexp='net.ipv4.conf.all.secure_redirects'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27066-0: sysctl_net_ipv4_conf_all_log_martians"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.log_martians = 1'
+    regexp='net.ipv4.conf.all.log_martians'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27015-7: sysctl_net_ipv4_conf_default_accept_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.default.accept_redirects = 0'
+    regexp='net.ipv4.conf.default.accept_redirects'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-26831-8: sysctl_net_ipv4_conf_default_secure_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.default.secure_redirects = 0'
+    regexp='net.ipv4.conf.default.secure_redirects'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-26883-9: sysctl_net_ipv4_icmp_echo_ignore_broadcasts"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.icmp_echo_ignore_broadcasts = 1'
+    regexp='net.ipv4.icmp_echo_ignore_broadcasts'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-26993-6: sysctl_net_ipv4_icmp_ignore_bogus_error_responses"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.icmp_ignore_bogus_error_responses = 1'
+    regexp='net.ipv4.icmp_ignore_bogus_error_responses'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-26979-5: sysctl_net_ipv4_conf_all_rp_filter"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv4.conf.all.rp_filter = 1'
+    regexp='net.ipv4.conf.all.rp_filter'
+    state=present
+  notify: reload sysctl
+
+- name: "CCE-27166-8: sysctl_ipv6_default_accept_redirects"
+  lineinfile:
+    dest=/etc/sysctl.conf
+    line='net.ipv6.conf.default.accept_redirects = 0'
+    regexp='net.ipv6.conf.default.accept_redirects'
+    state=present
+  notify: reload sysctl

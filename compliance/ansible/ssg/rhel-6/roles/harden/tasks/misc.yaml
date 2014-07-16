@@ -1,0 +1,77 @@
+# This file is part of Harden Role
+# Copyright (C) 2014 Bill Carlson
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+#Various one shot changes
+- name: "CCE-26780-7: postfix_network_listening"
+  lineinfile:
+    dest=/etc/postfix/main.cf
+    line=inet_interfaces=localhost
+    regexp=^inet_interfaces
+  notify:
+    restart postfix
+
+
+- name: "CCE-26855-7: securetty_root_login_console_only"
+  replace:
+    dest=/etc/securetty
+    regexp='^vc'
+
+- name: "CCE-26974-6: set_system_login_banner"
+  template:
+    dest=/etc/issue
+    src=issue
+
+- name: "CCE-27040-5: require_singleuser_auth"
+  lineinfile:
+    dest=/etc/sysconfig/init
+    line='SINGLE=/sbin/sulogin'
+    regexp='^#*SINGLE'
+  when:  ansible_os_family == 'RedHat'
+
+- name: "CCE-27043-9: disable_interactive_boot"
+  lineinfile:
+    dest=/etc/sysconfig/init
+    line='PROMPT=no'
+    regexp='^#*PROMPT'
+
+- name: "CCE-26785-6: check for enable_auditd_bootloader"
+  shell: "grep   -E '^[[:blank:]]+kernel' /boot/grub/grub.conf | grep -q -v 'audit=1'"
+  register: no_enable_auditd_bootloader
+  failed_when: "no_enable_auditd_bootloader.stderr"
+  #ignore_errors: True
+  changed_when: False
+
+- name: "CCE-26785-6: enable_auditd_bootloader"
+  #TODO: fix, using replace results in python inifinite re loop.
+  #This ends up triggering a change every time.
+  command: perl -pi -e '/audit=1/ or s/(^[ \t]*kernel.*)/\1 audit=1/' grub.conf
+    chdir=/boot/grub
+  when: no_enable_auditd_bootloader|changed and ansible_os_family == 'RedHat' and no_enable_auditd_bootloader.rc == 0
+
+- name: "CCE-26444-0: set_iptables_default_rule"
+  template:
+    dest=/etc/sysconfig/iptables
+    src=iptables
+  notify: reload iptables
+  when: ansible_os_family == 'RedHat'
+
+- name: "CCE-27031-4: umask_for_daemons"
+  lineinfile:
+    dest=/etc/init.d/functions
+    line="umask 027"
+    regexp="^ *umask"
+

@@ -1,0 +1,77 @@
+# This file is part of Harden Role
+# Copyright (C) 2014 Bill Carlson
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+#This is all RedHat specific
+- name: "pam: remove authconfig"
+  yum: name=authconfig state=absent
+  tags: packages
+
+- name: "CCE-27038-9: no_empty_passwords"
+  replace:
+    dest="{{item}}"
+    regexp='nullok'
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/system-auth-ac
+
+- name: "CCE-26844-1,CCE-27110-6,CCE-27215-3: accounts_passwords_pam_faillock_deny,deny_password_attempts_unlock_time,accounts_passwords_pam_fail_interval part one"
+  lineinfile:
+    dest="{{item}}"
+    state=present
+    line="auth [default=die] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900"
+    insertafter='^auth *sufficient *pam_unix.so'
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/password-auth
+
+- name: "CCE-26844-1,CCE-27110-6,CCE-27215-3: accounts_passwords_pam_faillock_deny,deny_password_attempts_unlock_time,accounts_passwords_pam_fail_interval part two"
+  lineinfile:
+    dest="{{item}}"
+    state=present
+    line="auth required pam_faillock.so authsucc deny=3 unlock_time=604800 fail_interval=900"
+    insertafter='^auth \[default=die\] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900'
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/password-auth
+
+- name: "CCE-26741-9: accounts_password_reuse_limit"
+  lineinfile:
+    dest=/etc/pam.d/system-auth
+    state=present
+    backrefs=yes
+    line="password    sufficient    pam_unix.so \\1 remember=24"
+    regexp='^password *sufficient *pam_unix.so(([^ ]*( (?!remember=24).)+[^ \n]*)*)$'
+  
+- name: "CCE-27291-4: display_login_attempts"
+  lineinfile:
+    dest="{{item}}"
+    state=present
+    line="session     required      pam_lastlog.so showfailed"
+    insertafter='^session *required *pam_limits.so'
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/password-auth
+
+- name: "CCE-26374-9,CCE-26601-5,CCE-26409-3,CCE-26631-2,CCE-26615-5: check for accounts_password_pam_cracklib_dcredit,accounts_password_pam_cracklib_ucredit,accounts_password_pam_cracklib_ocredit,accounts_password_pam_cracklib_lcredit,accounts_password_pam_cracklib_difok"
+  script: verify_pam_cracklib.pl /etc/pam.d/system-auth
+  register: no_enable_pam_cracklib
+  failed_when: "no_enable_pam_cracklib.stderr"
+  changed_when: "no_enable_pam_cracklib.rc == 1"
+
+- name: "CCE-26374-9,CCE-26601-5,CCE-26409-3,CCE-26631-2,CCE-26615-5:accounts_password_pam_cracklib_dcredit,accounts_password_pam_cracklib_ucredit,accounts_password_pam_cracklib_ocredit,accounts_password_pam_cracklib_lcredit,accounts_password_pam_cracklib_difok"
+  script: update_pam_cracklib.pl /etc/pam.d/system-auth
+  when: no_enable_pam_cracklib|changed and ansible_os_family == 'RedHat' and no_enable_pam_cracklib.rc == 1
