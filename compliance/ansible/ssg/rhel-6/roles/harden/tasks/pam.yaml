@@ -26,7 +26,6 @@
     regexp='nullok'
   with_items:
     - /etc/pam.d/system-auth
-    - /etc/pam.d/system-auth-ac
 
 - name: "CCE-26844-1,CCE-27110-6,CCE-27215-3: accounts_passwords_pam_faillock_deny,deny_password_attempts_unlock_time,accounts_passwords_pam_fail_interval part one"
   lineinfile:
