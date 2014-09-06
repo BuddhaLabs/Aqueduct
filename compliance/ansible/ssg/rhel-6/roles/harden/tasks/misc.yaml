@@ -66,7 +66,7 @@
   template:
     dest=/etc/sysconfig/iptables
     src=iptables
-  notify: reload iptables
+  notify: restart iptables
   when: ansible_os_family == 'RedHat'
 
 - name: "CCE-27031-4: umask_for_daemons"

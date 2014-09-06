@@ -26,6 +26,7 @@
   yum: name="{{item}}"
   with_items:
     - audit
+    - iptables
   when: ansible_os_family == 'RedHat'
 
 
