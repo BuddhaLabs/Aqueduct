@@ -63,6 +63,15 @@
     insertafter='^session *required *pam_limits.so'
   with_items:
     - /etc/pam.d/system-auth
+  
+#added as fix for prior usage, remove in time
+- name: "CCE-27291-4: display_login_attempts, REMOVE on password-auth"
+  lineinfile:
+    dest="{{item}}"
+    state=absent
+    line="session     required      pam_lastlog.so showfailed"
+    insertafter='^session *required *pam_limits.so'
+  with_items:
     - /etc/pam.d/password-auth
 
 - name: "CCE-26374-9,CCE-26601-5,CCE-26409-3,CCE-26631-2,CCE-26615-5: check for accounts_password_pam_cracklib_dcredit,accounts_password_pam_cracklib_ucredit,accounts_password_pam_cracklib_ocredit,accounts_password_pam_cracklib_lcredit,accounts_password_pam_cracklib_difok"
