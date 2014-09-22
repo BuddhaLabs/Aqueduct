@@ -65,9 +65,16 @@
 - name: "CCE-26444-0: set_iptables_default_rule"
   template:
     dest=/etc/sysconfig/iptables
-    src=iptables
+    src="{{iptables_template}}"
   notify: restart iptables
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and provision_iptables
+  
+- name: "CCE-26444-0: set_iptables_default_rule, started"
+  service:
+    name=iptables
+    state=started
+    enabled=yes
+  when: provision_iptables
 
 - name: "CCE-27031-4: umask_for_daemons"
   lineinfile:
