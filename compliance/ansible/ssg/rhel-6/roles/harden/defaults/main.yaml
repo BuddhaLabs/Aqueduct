@@ -15,7 +15,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ---
 ssh_ClientAliveInterval: 900
-provision_iptables: true
+#Options iptables control, set to false to not take any action for iptables.
+iptables_provision: true
 #Change to alternate template location if desired
 #example:
 #iptables_template: '

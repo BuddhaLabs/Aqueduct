@@ -22,13 +22,19 @@
     - screen
     - openswan
 
+- name: "CCE-26444-0: package_iptables_installed, Redhat"
+  yum: "name=iptables"
+  when: iptables_provision and ansible_os_family == 'RedHat'
+
+- name: "CCE-26444-0: package_iptables_installed, Debian"
+  apt: "name=iptables-persistent"
+  when: iptables_provision and ansible_os_family == 'Debian'
+
 - name: basic Redhat packages
   yum: name="{{item}}"
   with_items:
     - audit
-    - iptables
   when: ansible_os_family == 'RedHat'
-
 
 - name: basic Debian packages
   apt: name="{{item}}"

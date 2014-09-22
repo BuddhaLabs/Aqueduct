@@ -67,14 +67,14 @@
     dest=/etc/sysconfig/iptables
     src="{{iptables_template}}"
   notify: restart iptables
-  when: ansible_os_family == 'RedHat' and provision_iptables
+  when: ansible_os_family == 'RedHat' and iptables_provision
   
 - name: "CCE-26444-0: set_iptables_default_rule, started"
   service:
     name=iptables
     state=started
     enabled=yes
-  when: provision_iptables
+  when: iptables_provision
 
 - name: "CCE-27031-4: umask_for_daemons"
   lineinfile:
