@@ -20,8 +20,9 @@
 - name: reload sysctl
   command: sysctl -p /etc/sysctl.conf
 
+#NOTE: service iptables returns status as running even when actually stopped on RHEL.
 - name: restart iptables
-  service: name=iptables state=restarted
+  service: name=iptables state=reloaded
 
 - name: restart postfix
   shell: postfix stop ; postfix start
