@@ -1,0 +1,56 @@
+Harden Usage
+==========
+
+Basic Setup
+----------
+This is a ansible playbook role, refer to ansible documentation regarding full use:
+http://docs.ansible.com/playbooks_roles.html#roles
+
+Sample setup run, assuming ansible config in place:
+
+git clone git://git.fedorahosted.org/git/aqueduct.git ~/src/aqueduct
+
+$ mkdir playbook ; cd playbook
+$ mkdir roles
+$ ln -s ~/src/aqueduct/compliance/ansible/ssg/rhel-6/roles/harden roles/
+$ vi my.inventory
+$ vi site.yaml
+$ ansible-playbook -i my.inventory site.yaml
+
+Exmaple site.yaml to use harden role:
+
+---
+- hosts: all
+  roles: harden
+
+
+Configurable Variables
+----------
+These items may be defined at playbook role level to customize without
+modifying repository version. Others may be made as well but not intended or tested.
+
+iptables_provision: <true|false>
+	Default: true
+	Indicates whether iptables rules will be provisioned by harden
+	and iptables rules in effect.
+	
+	Example:
+	----------
+	- hosts: all
+	  roles: { role: harden, iptables_provision: false }
+
+
+iptables_template: <path>
+	Default: iptables
+	Path to ansible template for iptables rules file.
+	This may be outside of harden role in ansible method.
+
+	Example:
+	----------
+	- hosts: all
+	  roles: { roles: harden, iptables_template: roles/common/templates/iptables_master }
+
+
+
+---
+Copyright (C) 2014 Bill Carlson http://apgtm.com/
