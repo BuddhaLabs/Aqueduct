@@ -17,7 +17,8 @@
 - name: Load distro-specific variables
   include_vars: "{{ ansible_os_family }}.yaml"
   tags: 
-    - all
+    - accounts,all,iptables,audit,iptables,login,misc,modules,packages,pam,ssh,sysctl
+    #all tags must be represented here, gather by running ansible-playbook with a junk tag.
 - include: packages.yaml
   tags: packages
 - include: modules.yaml
