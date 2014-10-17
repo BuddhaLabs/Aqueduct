@@ -68,6 +68,7 @@
     src="{{iptables_template}}"
   notify: restart iptables
   when: ansible_os_family == 'RedHat' and iptables_provision
+  tags: iptables
   
 - name: "CCE-26444-0: set_iptables_default_rule, started"
   service:
